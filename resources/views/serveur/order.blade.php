@@ -46,7 +46,7 @@
     </style>
 @section('content')
     <div class="container-fluid">
-        <h2>Réservations des clients</h2>
+        <h2>Commandes des clients</h2>
 
       
             <table class="table table-bordered table-striped table-hover text-white">

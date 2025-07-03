@@ -122,11 +122,42 @@
                                     </form>
                                 </td>
                                 <td>
+
+                                    
                                     <form action="{{ url('/delete_table', $table->id) }}" method="POST" onsubmit="return confirm('Voulez-vous vraiment supprimer cette table ?');" style="display:inline;">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="btn-delete">Supprimer</button>
                                     </form>
+
+
+
+                                    <form action="{{ url('assign_serveur/'.$table->id) }}" method="POST">
+                                        @csrf
+                                        <select name="serveur_id" class="form-control">
+                                            <option value="">-- Assigner un serveur --</option>
+                                            @foreach($serveurs as $serveur)
+                                                <option value="{{ $serveur->id }}" {{ $table->serveur_id == $serveur->id ? 'selected' : '' }}>
+                                                    {{ $serveur->name }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                        <button class="btn btn-sm btn-primary mt-1">Assigner</button>
+                                    </form>
+
+                                        @if(in_array(strtolower($table->statut), ['réservée', 'occupée']))
+                                            <form action="{{ url('/liberer_table', $table->id) }}" method="POST" style="display:inline;">
+                                                @csrf
+                                                @method('PUT')
+                                                <button type="submit" class="btn" style="background-color: #27ae60; color: white; margin-left: 5px;">
+                                                    Libérer
+                                                </button>
+                                            </form>
+                                        @endif
+
+
+
+
                                 </td>
                             </tr>
                         @endforeach

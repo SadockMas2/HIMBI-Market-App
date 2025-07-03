@@ -1,157 +1,125 @@
 @extends('serveur.index')
+
 <style>
-    body {
-      background-color: #260814;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      margin: 0;
-      padding: 0;
-      color: #333;
-    }
+  body {
+    background-color: #260814;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    color: #eee;
+  }
 
+  .page-content {
+    max-width: 1000px;
+    margin: 40px auto 40px 270px; /* Décalage pour le sidebar */
+    padding: 25px 20px;
+    background: #393838;
+    border-radius: 12px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  }
+
+  h2 {
+    font-weight: 700;
+    margin-bottom: 25px;
+    color: #d1d7dc;
+    text-align: center;
+    font-size: 26px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 15px;
+    background-color: #1a1a1a;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  thead th {
+    background-color: #061b29;
+    color: #49a6e9;
+    font-weight: 600;
+    padding: 10px;
+    text-align: center;
+  }
+
+  tbody td {
+    padding: 8px 10px;
+    text-align: center;
+    color: #fff;
+    border-bottom: 1px solid #444;
+  }
+
+  tr:hover {
+    background-color: #2e2e2e;
+  }
+
+  @media (max-width: 768px) {
     .page-content {
-      max-width: 900px;
-      margin: 40px auto;
-      padding: 30px 20px;
-      background: rgb(57, 56, 56);
-      border-radius: 12px;
-      box-shadow: 0 6px 20px rgb(0 0 0 / 0.1);
-    }
-
-    h2 {
-      font-weight: 700;
-      margin-bottom: 30px;
-      color: #d1d7dc;
-      text-align: center;
-      font-size: 30px;
+      margin: 20px 10px;
     }
 
     table {
-      width: 100%;
-      border-collapse: separate;
-      border-spacing: 0 12px;
-      font-size: 16px;
+      font-size: 13px;
     }
 
-    thead th {
-      background-color: #061b29;
-      color: rgb(70, 63, 204);
-      font-weight: 700;
-      padding: 15px;
-      border-radius: 10px 10px 0 0;
-      text-align: center;
-      user-select: none;
-    }
-
-    tbody tr {
-      background-color: #00080c;
-      color: white;
-      font-weight: 600;
-      transition: background-color 0.3s ease;
-      border-radius: 8px;
-      box-shadow: 0 2px 6px rgb(0 0 0 / 0.08);
-    }
-
-    tbody tr:hover {
-      background-color: #1c5980;
+    thead {
+      display: none;
     }
 
     tbody td {
-      padding: 12px 15px;
-      text-align: center;
-      border-radius: 0 0 8px 8px;
-      vertical-align: middle;
+      display: block;
+      text-align: right;
+      padding: 8px;
+      position: relative;
     }
 
-    form {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
+    tbody td::before {
+      content: attr(data-label);
+      position: absolute;
+      left: 10px;
+      text-align: left;
+      font-weight: bold;
+      color: #aaa;
     }
 
-    form input[type="number"] {
-      max-width: 100px;
-      padding: 6px 10px;
-      border-radius: 6px;
-      border: 1.8px solid #b0c4de;
-      font-size: 16px;
-      transition: border-color 0.3s ease;
-    }
-
-    form input[type="number"]:focus {
-      border-color: #3498db;
-      outline: none;
-      box-shadow: 0 0 8px rgba(52, 152, 219, 0.3);
-    }
-
-    form button {
-      background-color: #3498db;
-      border: none;
-      color: white;
-      font-weight: 600;
-      padding: 8px 16px;
+    tbody tr {
+      margin-bottom: 10px;
+      display: block;
+      border: 1px solid #333;
       border-radius: 8px;
-      cursor: pointer;
-      font-size: 16px;
-      transition: background-color 0.3s ease;
+      padding: 8px;
     }
+  }
+</style>
 
-    form button:hover {
-      background-color: #2868c7;
-    }
-
-    @media (max-width: 480px) {
-      .page-content {
-        padding: 20px 10px;
-      }
-
-      form {
-        flex-direction: column;
-        gap: 12px;
-      }
-
-      form input[type="number"] {
-        max-width: 100%;
-        width: 100%;
-      }
-
-      form button {
-        width: 100%;
-      }
-    }
-
-  </style>
 @section('content')
-    <div class="container-fluid">
-        <h2>Réservations des clients</h2>
+<div class="page-content">
+    <h2>Réservations des clients</h2>
 
-      
-            <table class="table table-bordered table-striped table-hover text-white">
-                <thead class="table-dark">
-                    <tr>
-                        <th>Nom</th>
-                        <th>Téléphone</th>
-                        <th>Nombre d'invités</th>
-                        <th>Date</th>
-                        <th>Heure</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    
-                        @foreach ($book as $book )
-                            
-                      
-                    <tr>
-                        <td>{{ $book->name }}</td>
-                        <td>{{ $book->phone }}</td>
-                        <td>{{ $book->guest }}</td>
-                        <td>{{ $book->date }}</td>
-                        <td>{{ $book->time }}</td>
-                    </tr>
-                    @endforeach
-                </tbody>
-            </table>
-   
-    </div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Nom</th>
+                <th>Téléphone</th>
+                <th>Invités</th>
+                <th>Date</th>
+                <th>Heure</th>
+                <th>Table</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach ($book as $booking)
+            <tr>
+                <td data-label="Nom">{{ $booking->name }}</td>
+                <td data-label="Téléphone">{{ $booking->phone }}</td>
+                <td data-label="Invités">{{ $booking->guest }}</td>
+                <td data-label="Date">{{ $booking->date }}</td>
+                <td data-label="Heure">{{ $booking->time }}</td>
+                <td data-label="Table">{{ $booking->table_id }}</td>
+            </tr>
+            @endforeach
+        </tbody>
+    </table>
+</div>
 @endsection

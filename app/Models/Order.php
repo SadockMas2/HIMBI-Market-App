@@ -20,6 +20,7 @@ class Order extends Model
         'delivery_status',
         'food_id',
         'stock_insuffisant',
+      
     ];
         public function food()
             {

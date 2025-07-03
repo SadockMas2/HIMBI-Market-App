@@ -9,7 +9,15 @@ use App\Models\Order;
 use App\Models\Book;
 use App\Models\User;
 use App\Models\Table;
+use App\Models\Reservation;
 use App\Models\Serveur;
+use App\Models\ServerOrder;  // ajoute ce use si tu as ce modèle
+use Barryvdh\DomPDF\Facade\Pdf as FacadePdf;
+use Illuminate\Mail\Transport\ResendTransport;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Database\Eloquent\Builder;
+
+
 
 
 class AdminController extends Controller
@@ -71,9 +79,48 @@ class AdminController extends Controller
         {
           
             $tables = Table::all(); // Récupérer toutes les tables aussi
+            $serveurs = User::where('usertype', 'serveur')->get();
 
-            return view('admin.view_table', compact('tables'));
+
+            return view('admin.view_table', compact('tables','serveurs'));
         }
+
+        public function updateCommandeStatus(Request $request, $id)
+        {
+            $request->validate([
+                'status' => 'required|in:en_attente,en_cours,terminee,payee',
+            ]);
+
+            $commande = ServerOrder::findOrFail($id);
+            $commande->status = $request->status;
+            $commande->save();
+
+            return redirect()->back()->with('success', 'Statut de la commande mis à jour.');
+        }
+
+        public function libererTable($id)
+        {
+            $table = Table::findOrFail($id);
+            $table->statut = 'Disponible';
+            $table->save();
+
+            return redirect()->back()->with('success', "Table {$table->nom_table} libérée avec succès.");
+        }
+
+     
+
+        public function commandesEnCours()
+        {
+            // On récupère toutes les commandes qui ne sont pas terminées ou payées
+            $commandes = ServerOrder::whereNotIn('status', ['terminee', 'payee'])
+                        ->with(['table', 'serveur', 'food'])
+                        ->get();
+
+            return view('admin.commandes_en_cours', compact('commandes'));
+        }
+
+
+
 
 
         public function delete_food($id)
@@ -319,7 +366,133 @@ class AdminController extends Controller
         {
             return view('admin.Paiements');
         }
-    }
 
+        public function assign_serveur(Request $request, $id)
+        {
+            $table = Table::findOrFail($id);
+            $table->serveur_id = $request->serveur_id;
+            $table->save();
+
+            return back()->with('success', 'Serveur assigné avec succès à la table.');
+        }
+
+      public function historiqueCommandesParServeur($serveurId)
+        {
+            $commandes = ServerOrder::with(['food', 'payments'])
+                ->where('serveur_id', $serveurId)
+                ->orderBy('created_at', 'desc')
+                ->get();
+
+            return view('admin.historique_commandes', compact('commandes'));
+        }
+
+
+        public function historiqueServeurs()
+        {
+            $commandes = ServerOrder::with('serveur', 'table', 'food')
+                ->orderBy('created_at', 'desc')
+                ->get();
+
+            return view('admin.historique_serveurs', compact('commandes'));
+        }
+
+        public function afficherFacture($id)
+        {
+            $commande = ServerOrder::with('food', 'table', 'serveur')->findOrFail($id);
+            return view('admin.facture', compact('commande'));
+        }
+
+        public function marquerCommePaye($id)
+        {
+            $commande = ServerOrder::findOrFail($id);
+            $commande->payment_status = 'payé';
+            $commande->save();
+
+            return redirect()->back()->with('success', 'Commande marquée comme payée.');
+        }
+
+        public function afficherRecu($id)
+        {
+            $commande = ServerOrder::with('food', 'table', 'serveur')->findOrFail($id);
+            return view('admin.recu', compact('commande'));
+        }
+
+       
+
+
+   
+
+        public function historique(Request $request)
+        {
+            $queryCommandes = ServerOrder::with('serveur', 'table', 'food')
+                ->where('payment_status', 'payé');
+
+            if ($request->filled('serveur_id')) {
+                $queryCommandes->where('serveur_id', $request->serveur_id);
+            }
+
+            if ($request->filled('date')) {
+                $queryCommandes->whereDate('created_at', $request->date);
+            }
+
+            $commandes = $queryCommandes->orderBy('created_at', 'desc')->get();
+
+            // Total général des commandes payées
+            $totalCommandes = $commandes->sum(function ($cmd) {
+                $prix = is_numeric($cmd->food->price) ? (float) $cmd->food->price : 0;
+                $quantite = (int) $cmd->quantite;
+                return $prix * $quantite;
+            });
+
+            $queryReservations = Book::with('client', 'table')
+                ->where('payment_status', 'payé');
+
+            if ($request->filled('date')) {
+                $queryReservations->whereDate('created_at', $request->date);
+            }
+
+            $reservations = $queryReservations->orderBy('created_at', 'desc')->get();
+
+            $serveurs = User::where('usertype', 'serveur')->get();
+
+            return view('admin.historique', compact('commandes', 'reservations', 'serveurs', 'totalCommandes'));
+        }
+
+
+       public function exportHistoriquePDF(Request $request)
+        {
+            $queryCommandes = ServerOrder::with('serveur', 'table', 'food')
+                ->where('payment_status', 'payé');
+
+            // Appliquer les filtres
+            if ($request->filled('serveur_id')) {
+                $queryCommandes->where('serveur_id', $request->serveur_id);
+            }
+
+            if ($request->filled('date')) {
+                $queryCommandes->whereDate('created_at', $request->date);
+            }
+
+            $commandes = $queryCommandes->orderBy('created_at', 'desc')->get();
+
+            $totalCommandes = $commandes->sum(function ($cmd) {
+                $prix = is_numeric($cmd->food->price) ? (float) $cmd->food->price : 0;
+                $quantite = (int) $cmd->quantite;
+                return $prix * $quantite;
+            });
+
+            $filtreServeur = $request->filled('serveur_id') ? User::find($request->serveur_id)->name ?? null : null;
+            $filtreDate = $request->filled('date') ? $request->date : null;
+
+            $pdf = Pdf::loadView('pdfs.historique_commandes', compact('commandes', 'totalCommandes', 'filtreServeur', 'filtreDate'))
+                    ->setPaper('A4', 'landscape');
+
+            return $pdf->download('historique_commandes.pdf');
+        }
+
+
+
+
+}
 
 

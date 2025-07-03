@@ -51,6 +51,7 @@
           <table class="table table-bordered text-center">
             <thead>
               <tr>
+                <th>ID</th>
                 <th>Nom</th>
                 <th>Détails</th>
                 <th>Prix</th>
@@ -62,6 +63,7 @@
             <tbody>
               @foreach($data as $item)
                 <tr>
+                  <td>{{ $item->id }}</td>
                   <td>{{ $item->title }}</td>
                   <td>{{ $item->detail }}</td>
                   <td>${{ number_format((float) $item->price, 2) }}</td>

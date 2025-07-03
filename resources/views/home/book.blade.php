@@ -1,3 +1,8 @@
+@php
+    use Illuminate\Support\Facades\Auth;
+@endphp
+
+
 <div class="container-fluid has-bg-overlay text-center text-light has-height-lg middle-items" id="book-table">
         <div class="">
             <h2 class="section-title mb-5">TROUVER UNE TABLE</h2>

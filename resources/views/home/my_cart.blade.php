@@ -126,31 +126,35 @@
                                 <th>Supprimer</th>
                             </tr>
 
-                            <?php
-                            
-                                $total_price = 0;
-                            ?>
+                                 @php
+                                    $total_price = 0;
+                                @endphp
 
-                           @foreach ($data as $item)
-                            <tr>
-                                <td>{{ $item->title }}</td>
-                                <td>${{ $item->price }}</td>
-                                <td>{{ $item->quantity }}</td>
-                                <td><img width="150" src="food_img/{{ $item->image }}" alt=""></td>
-                                <td>
-                                    <form action="{{ url('confirm_order') }}" method="POST">
-                                        @csrf
-                                        <input type="hidden" name="food_id" value="{{ $item->id }}">
-                                        <input type="hidden" name="quantity" value="{{ $item->quantity }}">
-                                        <input type="hidden" name="name" value="{{ Auth()->user()->name }}">
-                                        <input type="hidden" name="email" value="{{ Auth()->user()->email }}">
-                                        <input type="hidden" name="phone" value="{{ Auth()->user()->phone }}">
-                                        <input type="hidden" name="adress" value="{{ Auth()->user()->adress }}">
-                                        <input class="btn btn-success" type="submit" value="Commander">
-                                    </form>
-                                </td>
-                            </tr>
-                            @endforeach
+                                @foreach ($data as $item)
+                                    @php
+                                        $subtotal = $item->price * $item->quantity;
+                                        $total_price += $subtotal;
+                                    @endphp
+                                    <tr>
+                                        <td>{{ $item->title }}</td>
+                                        <td>${{ number_format($item->price, 2, '.', ',') }}</td>
+                                        <td>{{ $item->quantity }}</td>
+                                        <td><img width="150" src="food_img/{{ $item->image }}" alt=""></td>
+                                        <td>
+                                            <form action="{{ url('confirm_order') }}" method="POST">
+                                                @csrf
+                                                <input type="hidden" name="food_id" value="{{ $item->id }}">
+                                                <input type="hidden" name="quantity" value="{{ $item->quantity }}">
+                                                <input type="hidden" name="name" value="{{ Auth()->user()->name }}">
+                                                <input type="hidden" name="email" value="{{ Auth()->user()->email }}">
+                                                <input type="hidden" name="phone" value="{{ Auth()->user()->phone }}">
+                                                <input type="hidden" name="adress" value="{{ Auth()->user()->adress }}">
+                                                <input class="btn btn-success" type="submit" value="Commander">
+                                            </form>
+                                        </td>
+                                    </tr>
+                                @endforeach
+
 
                       </table>
 

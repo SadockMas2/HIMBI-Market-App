@@ -88,6 +88,7 @@
           <th>Date</th>
           <th>Heure</th>
           <th>Table-ID</th>
+          <th>status</th>
         </tr>
       </thead>
       <tbody>
@@ -99,6 +100,7 @@
             <td>{{ $reservation->date }}</td>
             <td>{{ $reservation->time }}</td>
             <td>{{ $reservation->table_id }}</td>
+            <td>{{ $reservation->payment_status }}</td>
           </tr>
         @endforeach
       </tbody>

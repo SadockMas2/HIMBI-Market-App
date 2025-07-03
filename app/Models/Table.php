@@ -6,10 +6,22 @@ use Illuminate\Database\Eloquent\Model;
 
 class Table extends Model
 {
-    protected $fillable = ['nom_table', 'capacite', 'statut', 'description'];
+    protected $fillable = ['nom_table', 'capacite', 'statut', 'description', 'serveur_id'];
 
-    public function reservations()
-    {
-        return $this->hasMany(Book::class);
-    }
+            // Table.php
+            public function reservation()
+            {
+                return $this->hasOne(Book::class, 'table_id'); // ou hasMany si plusieurs
+            }
+
+            public function commandes()
+            {
+                return $this->hasMany(ServerOrder::class, 'table_id');
+            }
+            
+            public function serveur()
+            {
+                return $this->belongsTo(User::class, 'serveur_id');
+            }
+
 }

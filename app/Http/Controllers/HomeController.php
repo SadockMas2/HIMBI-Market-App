@@ -27,52 +27,40 @@ class HomeController extends Controller
         }
 
 
-    public function index()
-
-    {
-    // Si un utilisateur est connecté
-         if (Auth::id()) 
+        public function index()
         {
-        // Récupère le type de l’utilisateur connecté
-            $usertype = Auth::user()->usertype;
+            // Si un utilisateur est connecté
+            if (Auth::id()) {
+                $usertype = Auth::user()->usertype;
 
-            if ($usertype === 'user')
-            {
-                $data = Food::all();
-                $tables = Table::where('statut', 'Disponible')->get();
+                if ($usertype === 'user') {
+                    $data = Food::all();
+                    $tables = Table::where('statut', 'Disponible')->get();
 
-                return view('home.index', compact('data','tables'));
+                    return view('home.index', compact('data', 'tables'));
 
+                } elseif ($usertype === 'serveur') {
+                    return view('serveur.index');
+
+                } else { // admin
+                    $total_utilisateurs = User::where('usertype', '=', 'user')->count();
+                    $total_plats = Food::count();
+                    $total_commandes = Order::count();
+                    $total_reservations = Book::count(); // ou Table::where('statut', 'Réservée')->count();
+                    $total_livré = Order::where('delivery_status', '=', 'Delivered')->count();
+
+                    return view('admin.index', compact(
+                        'total_utilisateurs',
+                        'total_plats',
+                        'total_commandes',
+                        'total_reservations',
+                        'total_livré'
+                    ));
+                }
             }
-            elseif ($usertype === 'serveur')
-            {
-                return view('serveur.index');
-                
-            }
 
-        
-        else 
-        {
-            $total_utilisateurs = User::where('usertype', '=', 'user')->count();
-            $total_plats = Food::count();
-            $total_commandes = Order::count();
-            $total_reservations = Table::where('statut', '=', 'Disponible')->count();
-            $total_livré = Order::where('delivery_status', '=', 'Delivered')->count();
-
-            return view('admin.index', compact(
-                'total_utilisateurs',
-                'total_plats',
-                'total_commandes',
-                'total_reservations',
-                'total_livré'
-            ));
+            return redirect()->route('login');
         }
-    }
-
-    // Si personne n’est connecté
-    return redirect()->route('login');
-}
-
 
 
 

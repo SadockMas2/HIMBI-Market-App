@@ -66,4 +66,10 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function tables()
+    {
+        return $this->hasMany(Table::class, 'serveur_id');
+    }
+
 }

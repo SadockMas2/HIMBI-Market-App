@@ -88,7 +88,7 @@
 
                 <li>
                   <a href="{{ url('reservations') }}"> <i 
-                  <i class="fa fa-list-alt"></i>Reservations
+                    class="fa fa-list-alt"></i>Reservations
                   </a>               
                 </li>
 
@@ -97,13 +97,11 @@
 
                 
                 <li>
-                  <a href="{{ url('paiements') }}"> 
-                  <i class="fa fa-receipt"></i> Journal des paiements
-                 </a>
-           
+                    <a href="{{ url('historique') }}">
+                        <i class="fa fa-history"></i> Paiements
+                    </a>
                 </li>
 
-                
              
 
 
