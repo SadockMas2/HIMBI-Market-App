@@ -350,18 +350,29 @@ class AdminController extends Controller
             
         }
         
-       public function update_stock(Request $request, $id)
+        public function update_stock(Request $request, $id)
         {
             $request->validate([
                 'stock' => 'required|integer|min:0',
             ]);
 
+            // Mise à jour de la colonne 'stock' dans la table 'food'
             $food = Food::findOrFail($id);
             $food->stock = $request->stock;
             $food->save();
 
-            return redirect()->back()->with('success', 'Stock mis à jour avec succès.');
+            // Mise à jour ou création dans la table 'stocks'
+            if ($food->stockRelation) {
+                // Si une ligne existe déjà dans la table 'stocks'
+                $food->stockRelation->update(['quantity' => $request->stock]);
+            } else {
+                // Sinon, on en crée une nouvelle
+                $food->stockRelation()->create(['quantity' => $request->stock]);
+            }
+
+            return redirect()->back()->with('success', 'Stock mis à jour dans les deux tables.');
         }
+
         public function paiements()
         {
             return view('admin.Paiements');

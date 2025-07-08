@@ -155,7 +155,7 @@
         @foreach($food as $plat)
           <tr>
             <td>{{ $plat->title }}</td>
-            <td>{{ $plat->stock }}</td>
+            <td>{{ $plat->stockRelation->quantity ?? $plat->stock }}</td>
             <td>
               <form method="POST" action="{{ url('update_stock/'.$plat->id) }}">
                 @csrf
@@ -163,7 +163,7 @@
                   type="number"
                   name="stock"
                   min="0"
-                  value="{{ $plat->stock }}"
+                  value="{{ $plat->stockRelation->quantity ?? $plat->stock }}"
                   required
                   aria-label="Quantité en stock pour {{ $plat->title }}"
                 >

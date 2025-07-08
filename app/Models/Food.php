@@ -20,4 +20,10 @@ class Food extends Model
         'image',
         'stock',
     ];
+
+    public function stockRelation()
+{
+    return $this->hasOne(Stock::class, 'food_id');
+}
+
 }

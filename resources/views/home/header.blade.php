@@ -26,7 +26,7 @@
                     </li>
                 </ul>
                 <a class="navbar-brand m-auto" href="{{ url('/') }}">
-                    <img src="assets/imgs/logo_SeedFood.png" class="brand-img" alt="">
+                    <img src="#" class="brand-img" alt="">
                     <span class="brand-txt">HIMBI Market</span>
                 </a>
                 <ul class="navbar-nav">
