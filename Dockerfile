@@ -1,7 +1,7 @@
 # Image officielle PHP 8.2 avec Apache
 FROM php:8.2-apache
 
-# Installer les dépendances système et PHP nécessaires
+# Installer les extensions PHP nécessaires
 RUN apt-get update && apt-get install -y \
     libzip-dev \
     unzip \
@@ -11,19 +11,27 @@ RUN apt-get update && apt-get install -y \
 # Installer Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Copier tous les fichiers du projet dans le dossier web d'Apache
-COPY . /var/www/html
+# Activer mod_rewrite pour Laravel (routes propres)
+RUN a2enmod rewrite
 
+# Définir le dossier Laravel /public comme racine Apache
 WORKDIR /var/www/html
 
-# Installer les dépendances Laravel sans les packages dev, optimisé
+COPY . /var/www/html
+
+# Définir le bon DocumentRoot dans Apache
+RUN sed -i 's|DocumentRoot /var/www/html|DocumentRoot /var/www/html/public|g' /etc/apache2/sites-available/000-default.conf
+
+# Droits corrects sur les dossiers Laravel
+RUN chown -R www-data:www-data /var/www/html \
+    && chmod -R 755 /var/www/html/storage \
+    && chmod -R 755 /var/www/html/bootstrap/cache
+
+# Installer les dépendances Laravel
 RUN composer install --no-dev --optimize-autoloader
 
-# Donner les droits à Apache sur storage et bootstrap cache
-RUN chown -R www-data:www-data storage bootstrap/cache
-
-# Exposer le port 80 (Apache)
+# Exposer le port 80
 EXPOSE 80
 
-# Démarrer Apache en premier plan (mode standard)
+# Lancer Apache
 CMD ["apache2-foreground"]
