@@ -33,5 +33,9 @@ RUN composer install --no-dev --optimize-autoloader
 # Exposer le port 80
 EXPOSE 80
 
+# Compilation des assets Vite
+RUN npm install && npm run build
+
+
 # Lancer Apache
 CMD ["apache2-foreground"]

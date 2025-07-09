@@ -272,6 +272,7 @@ button,
 [type="reset"],
 [type="submit"] {
   -webkit-appearance: button;
+  appearance: button; /* ✅ ajouté */
 }
 
 button:not(:disabled),
@@ -300,6 +301,7 @@ input[type="time"],
 input[type="datetime-local"],
 input[type="month"] {
   -webkit-appearance: listbox;
+  appearance: listbox; /* ✅ ajouté */
 }
 
 textarea {
@@ -338,8 +340,9 @@ progress {
 [type="search"] {
   outline-offset: -2px;
   -webkit-appearance: none;
+  -moz-appearance: none; /* ✅ Firefox */
+  appearance: none;       /* ✅ Standard */
 }
-
 [type="search"]::-webkit-search-decoration {
   -webkit-appearance: none;
 }
@@ -4551,6 +4554,35 @@ input[type="button"].btn-block {
 .tab-content > .active {
   display: block;
 }
+@media (max-width: 768px) {
+  .navbar-nav {
+    flex-direction: column;
+  }
+
+  .navbar-brand {
+    font-size: 1.2rem;
+  }
+
+  .btn {
+    width: 100%;
+    margin-top: 10px;
+  }
+
+  header h1 {
+    font-size: 2rem;
+  }
+
+  header h2 {
+    font-size: 1.2rem;
+  }
+}
+
+
+
+
+
+
+
 
 .navbar {
   position: relative;

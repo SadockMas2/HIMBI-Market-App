@@ -16,6 +16,7 @@ use App\Http\Controllers\ServeurController;
             Route::get('/remove_cart/{id}',[HomeController::class,'remove_cart']);
             Route::post('/confirm_order',[HomeController::class,'confirm_order']);
             Route::post('book_table',[HomeController::class,'book_table']); 
+            Route::post('/add_cart_multiple', [HomeController::class, 'add_cart_multiple'])->name('add_cart_multiple');
 
 
 

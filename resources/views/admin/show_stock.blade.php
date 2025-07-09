@@ -129,6 +129,65 @@
       }
     }
 
+
+    @media (max-width: 768px) {
+  .page-content {
+    padding: 20px 10px;
+    margin: 20px 10px;
+  }
+
+  h2 {
+    font-size: 22px;
+  }
+
+  table,
+  thead,
+  tbody,
+  th,
+  td,
+  tr {
+    display: block;
+    width: 100%;
+  }
+
+  thead {
+    display: none; /* On cache l'en-tête sur petit écran */
+  }
+
+  tr {
+    margin-bottom: 15px;
+    background-color: #00080c;
+    border-radius: 10px;
+    padding: 10px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  }
+
+  td {
+    text-align: left;
+    padding: 10px 8px;
+    position: relative;
+  }
+
+  td::before {
+    content: attr(data-label);
+    font-weight: bold;
+    display: block;
+    margin-bottom: 6px;
+    color: #8ac6f2;
+  }
+
+  form {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  form input[type="number"],
+  form button {
+    width: 100%;
+  }
+}
+
+
   </style>
 </head>
 <body>
@@ -154,9 +213,10 @@
       <tbody>
         @foreach($food as $plat)
           <tr>
-            <td>{{ $plat->title }}</td>
-            <td>{{ $plat->stockRelation->quantity ?? $plat->stock }}</td>
-            <td>
+            <td data-label="Nom du plat">{{ $plat->title }}</td>
+            <td data-label="Quantité en stock">{{ $plat->stockRelation->quantity ?? $plat->stock }}</td>
+            <td data-label="Action">
+
               <form method="POST" action="{{ url('update_stock/'.$plat->id) }}">
                 @csrf
                 <input

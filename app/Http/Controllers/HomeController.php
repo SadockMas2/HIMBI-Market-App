@@ -65,96 +65,119 @@ class HomeController extends Controller
 
 
 
-    public function add_cart(Request $request,$id)
+    public function add_cart(Request $request, $id)
     {
-        
-        if(Auth::id())
-        {
-         $food = Food::find($id);
+        if (Auth::check()) {
+            $food = Food::find($id);
 
-        $cart_title = $food->title;
-        $cart_details = $food->detail;
-        $cart_price = Str::remove('$',$food->price);
-        $cart_image = $food->image;  
-        
-        
-            $data = new Cart;
-            $data->title = $cart_title;
-            $data->details = $cart_details;
-            $data->price = $cart_price  * $request->qty;
-            $data->image = $cart_image;
-            $data->quantity = $request->qty;
+            $cart = new Cart;
+            $cart->title = $food->title;
+            $cart->details = $food->detail;
+            $cart->price = Str::remove('$', $food->price) * $request->qty;
+            $cart->image = $food->image;
+            $cart->quantity = $request->qty;
+            $cart->userid = Auth::id();
 
-            $data->userid = Auth::user()->id;
-
-        $data->save();
-        return redirect()->back();
-
-
-        }
-        
-        else
-        {
+            $cart->save();
+            return redirect()->back();
+        } else {
             return redirect("login");
         }
-    }   
+    }
+public function add_cart_multiple(Request $request)
+{
+    if (!Auth::check()) {
+        return redirect()->route('login')->with('error', 'Connectez-vous pour ajouter au panier.');
+    }
 
-   public function my_cart()
+    $user_id = Auth::id();
+
+    $food_ids = $request->food_ids; // Tableau des plats sélectionnés
+    $quantities = $request->qty;    // Tableau associatif des quantités (id => qty)
+
+    if (!$food_ids || count($food_ids) == 0) {
+        return back()->with('error', 'Aucun plat sélectionné.');
+    }
+
+    foreach ($food_ids as $food_id) {
+        $food = \App\Models\Food::find($food_id);
+
+        if ($food) {
+            $qty = isset($quantities[$food_id]) ? (int)$quantities[$food_id] : 1;
+
+            $cart = new \App\Models\Cart();
+            $cart->title = $food->title;
+            $cart->details = $food->detail;
+            $cart->price = Str::replace('$', '', $food->price) * $qty;
+            $cart->image = $food->image;
+            $cart->quantity = $qty;
+            $cart->userid = $user_id;
+            $cart->save();
+        }
+    }
+
+    return redirect()->back()->with('success', 'Les plats sélectionnés ont été ajoutés au panier.');
+}
+
+    public function my_cart()
     {
-           if (!Auth::check())
+        if (!Auth::check()) {
+            return redirect()->route('login')->with('error', 'Vous devez être connecté.');
+        }
+
+        $data = Cart::where('userid', Auth::id())->get();
+        return view('home.my_cart', compact('data'));
+    }
+
+    
+                public function confirm_order(Request $request)
                 {
-                     return redirect()->route('login')->with('error', 'Vous devez être connecté pour accéder au panier.');
+                    $user_id = Auth::id();
+                    $food_ids = $request->food_id;
+                    $titles = $request->title;
+                    $quantities = $request->quantity;
+                    $prices = $request->price;
+
+                    if (!$food_ids || count($food_ids) === 0) {
+                        return back()->with('error', 'Aucun plat sélectionné.');
+                    }
+
+                    for ($i = 0; $i < count($food_ids); $i++) {
+                        $food = Food::find($food_ids[$i]);
+                        if (!$food) continue;
+
+                        $order = new Order;
+                        $order->name = $request->name;
+                        $order->email = $request->email;
+                        $order->phone = $request->phone;
+                        $order->adress = $request->adress;
+                        $order->title = $titles[$i];
+                        $order->quantity = $quantities[$i];
+                        $order->price = $prices[$i];
+                        $order->food_id = $food->id;
+                        $order->stock_insuffisant = $food->stock < $quantities[$i];
+                        $order->save();
+
+                        $food->stock -= $quantities[$i];
+                        $food->save();
+                    }
+
+                    // Vider le panier après commande
+                    Cart::where('userid', $user_id)->delete();
+
+                    return redirect('/')->with('success', 'Votre commande a été confirmée avec succès !');
                 }
 
-    $user_id = Auth::user()->id;
-    $data = Cart::where('userid', '=', $user_id)->get();    
-    return view('home.my_cart', compact('data'));
-        }
-    public function remove_cart($id)
 
+
+
+    public function remove_cart($id)
     {
-        $data = cart::find($id);
-        $data->delete();
+        $cart = Cart::find($id);
+        if ($cart) $cart->delete();
         return redirect()->back();
     }
 
-    public function confirm_order(Request $request)
-    {
-        $user_id = Auth::user()->id;
-        $cartItems = Cart::where('userid', '=', $user_id)->get();
-
-        foreach ($cartItems as $cart) {
-            $food = Food::where('title', $cart->title)->first();
-
-            // Sécurité : vérifie qu'on a trouvé le plat
-            if (!$food) continue;
-
-            $order = new Order;
-            $order->name = $request->name;
-            $order->email = $request->email;
-            $order->phone = $request->phone;
-            $order->adress = $request->adress;
-            $order->title = $cart->title;
-            $order->quantity = $cart->quantity;
-            $order->price = $cart->price;
-            $order->image = $cart->image;
-            $order->food_id = $food->id;
-
-            // Alerte stock insuffisant
-            $order->stock_insuffisant = $food->stock < $cart->quantity;
-
-            $order->save();
-
-            // Décrémenter le stock
-            $food->stock -= $cart->quantity;
-            $food->save();
-
-            // Supprimer le panier
-            $cart->delete();
-        }
-
-        return redirect()->back()->with('success', 'Commande confirmée et stock mis à jour');
-    }
 
 
     
