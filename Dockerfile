@@ -1,41 +1,45 @@
-# Image officielle PHP 8.2 avec Apache
+# Base PHP avec Apache
 FROM php:8.2-apache
 
-# Installer les extensions PHP nécessaires
+# Installe Node.js (v18), npm, extensions PHP nécessaires
 RUN apt-get update && apt-get install -y \
-    libzip-dev \
-    unzip \
+    curl \
     git \
-    && docker-php-ext-install zip pdo pdo_mysql
+    unzip \
+    libzip-dev \
+    gnupg \
+    && docker-php-ext-install zip pdo pdo_mysql \
+    && curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
+    && apt-get install -y nodejs
 
 # Installer Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Activer mod_rewrite pour Laravel (routes propres)
+# Activer mod_rewrite pour Laravel
 RUN a2enmod rewrite
 
-# Définir le dossier Laravel /public comme racine Apache
+# Définir le dossier de travail
 WORKDIR /var/www/html
 
-COPY . /var/www/html
+# Copier les fichiers du projet
+COPY . .
 
-# Définir le bon DocumentRoot dans Apache
+# Définir le bon DocumentRoot vers le dossier /public
 RUN sed -i 's|DocumentRoot /var/www/html|DocumentRoot /var/www/html/public|g' /etc/apache2/sites-available/000-default.conf
-
-# Droits corrects sur les dossiers Laravel
-RUN chown -R www-data:www-data /var/www/html \
-    && chmod -R 755 /var/www/html/storage \
-    && chmod -R 755 /var/www/html/bootstrap/cache
 
 # Installer les dépendances Laravel
 RUN composer install --no-dev --optimize-autoloader
 
-# Exposer le port 80
-EXPOSE 80
-
-# Compilation des assets Vite
+# Compiler les assets Vite
 RUN npm install && npm run build
 
+# Fixer les permissions
+RUN chown -R www-data:www-data /var/www/html \
+    && chmod -R 755 /var/www/html/storage \
+    && chmod -R 755 /var/www/html/bootstrap/cache
 
-# Lancer Apache
+# Exposer le port web
+EXPOSE 80
+
+# Démarrer Apache
 CMD ["apache2-foreground"]
