@@ -1,90 +1,87 @@
-<div id="testmonial" class="container-fluid wow fadeIn bg-dark text-light has-height-lg middle-items">
-        <h2 class="section-title my-5 text-center">REVIEWS</h2>
-        <div class="row mt-3 mb-5">
-            <div class="col-md-4 my-3 my-md-0">
-                <div class="testmonial-card">
-                    <h3 class="testmonial-title">Saidi Masudi </h3>
-                    <h6 class="testmonial-subtitle">Web Designer</h6>
-                    <div class="testmonial-body">
-                        <p>"Le talent fait gagner des matchs, mais le travail d'équipe et l'intelligence font gagner des championnats."</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4 my-3 my-md-0">
-                <div class="testmonial-card">
-                    <h3 class="testmonial-title">Wasingya nzanzu </h3>
-                    <h6 class="testmonial-subtitle">UX/UI Designer</h6>
-                    <div class="testmonial-body">
-                        <p>"Tout seul on va plus vite, ensemble on va plus loin."</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4 my-3 my-md-0">
-                <div class="testmonial-card">
-                    <h3 class="testmonial-title">Lompegu Bolamu </h3>
-                    <h6 class="testmonial-subtitle">Graphic Designer</h6>
-                    <div class="testmonial-body">
-                        <p>"Se réunir est un début, rester ensemble est un progrès, travailler ensemble est la réussite."</p>
-                    </div>
+<!-- STYLES CSS -->
+<style>
+    #contact {
+        background-color: #111;
+        color: #f8f9fa;
+        padding: 60px 0;
+    }
+
+    #contact h3 {
+        font-size: 2rem;
+        font-weight: bold;
+        color: #ffc107;
+        margin-bottom: 20px;
+    }
+
+    #contact p {
+        font-size: 1rem;
+        line-height: 1.6;
+    }
+
+    #contact .text-muted p {
+        margin-bottom: 10px;
+        font-size: 0.95rem;
+        color: #ccc;
+    }
+
+    #contact .ti-location-pin,
+    #contact .ti-support,
+    #contact .ti-email {
+        color: #17a2b8;
+        margin-right: 10px;
+        font-size: 1.2rem;
+    }
+
+    .map-container iframe {
+        width: 100%;
+        height: 100%;
+        min-height: 400px;
+        border: 0;
+        border-radius: 12px 0 0 12px;
+    }
+
+    @media (max-width: 767px) {
+        .map-container iframe {
+            border-radius: 12px 12px 0 0;
+        }
+
+        #contact .col-md-6 {
+            padding: 20px;
+        }
+    }
+</style>
+
+<!-- SECTION CONTACT -->
+<div id="contact" class="container-fluid border-top wow fadeIn">
+    <div class="row">
+        <!-- Carte Google Maps -->
+        <div class="col-md-6 px-0 map-container">
+
+                <iframe
+                    src="https://www.google.com/maps?q=-1.657325143827208,29.1946202444160935&z=16&output=embed"
+                    width="100%"
+                    height="100%"
+                    style="border:0; border-radius: 12px 0 0 12px;"
+                    allowfullscreen=""
+                    loading="lazy"
+                    referrerpolicy="no-referrer-when-downgrade">
+                </iframe>
+        </div>
+
+        <!-- Infos de Contact -->
+        <div class="col-md-6 px-5 d-flex align-items-center">
+            <div>
+                <h3>NOUS TROUVER</h3>
+                <p>
+                    Vous pouvez nous rendre visite à notre restaurant pour déguster de bons plats faits maison !<br>
+                    Pour toute information ou réservation, n'hésitez pas à nous contacter.
+                </p>
+                <div class="text-muted mt-4">
+                    <p><i class="ti-location-pin"></i> 85VV+3R9 HIMBI KATINDO, Goma</p>
+                    <p><i class="ti-support"></i> +243 977 654 321</p>
+                    <p><i class="ti-email"></i> contact@himbimarket.com</p>
                 </div>
             </div>
         </div>
     </div>
-
-    <!-- CONTACT Section  -->
-    <div id="contact" class="container-fluid bg-dark text-light border-top wow fadeIn">
-        <div class="row">
-            <div class="col-md-6 px-0">
-                <div id="map" style="width: 100%; height: 100%; min-height: 400px"></div>
-            </div>
-            <div class="col-md-6 px-5 has-height-lg middle-items">
-                <h3>FIND US</h3>
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sit, laboriosam 
-                    doloremque odio delectus, sunt magnam laborum impedit molestiae, magni quae 
-                    ipsum, ullam eos! Alias suscipit impedit et, adipisci illo quam.</p>
-                <div class="text-muted">
-                    <p><span class="ti-location-pin pr-3"></span> 12345 Fake ST NoWhere, AB Country</p>
-                    <p><span class="ti-support pr-3"></span> (123) 456-7890</p>
-                    <p><span class="ti-email pr-3"></span>info@website.com</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- page footer  -->
-    <div class="container-fluid bg-dark text-light has-height-md middle-items border-top text-center wow fadeIn">
-        <div class="row">
-            <div class="col-sm-4">
-                <h3>EMAIL US</h3>
-                <P class="text-muted">info@website.com</P>
-            </div>
-            <div class="col-sm-4">
-                <h3>CALL US</h3>
-                <P class="text-muted">(123) 456-7890</P>
-            </div>
-            <div class="col-sm-4">
-                <h3>FIND US</h3>
-                <P class="text-muted">12345 Fake ST NoWhere AB Country</P>
-            </div>
-        </div>
-    </div>
-    <div class="bg-dark text-light text-center border-top wow fadeIn">
-        <p class="mb-0 py-3 text-muted small">&copy; Copyright <script>document.write(new Date().getFullYear())</script> Made with <i class="ti-heart text-danger"></i> By <a href="http://devcrud.com">DevCRUD</a></p>
-    </div>
-    <!-- end of page footer -->
-
-	<!-- core  -->
-    <script src="assets/vendors/jquery/jquery-3.4.1.js"></script>
-    <script src="assets/vendors/bootstrap/bootstrap.bundle.js"></script>
-
-    <!-- bootstrap affix -->
-    <script src="assets/vendors/bootstrap/bootstrap.affix.js"></script>
-
-    <!-- wow.js -->
-    <script src="assets/vendors/wow/wow.js"></script>
-    
-    <!-- google maps -->
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCtme10pzgKSPeJVJrG1O3tjR6lk98o4w8&callback=initMap"></script>
-
-    <!-- FoodHut js -->
-    <script src="assets/js/foodhut.js"></script>
+</div>

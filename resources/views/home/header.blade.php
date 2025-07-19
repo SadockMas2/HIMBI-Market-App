@@ -13,153 +13,192 @@
     @include('home.css')
 
     <style>
-        /* Ajout ou remplacement dans foodhut.css recommandé */
+        /* === NAVBAR STYLÉE === */
+        .custom-navbar {
+            background-color: #1e1e1e;
+            padding: 10px 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
 
+        .custom-navbar .nav-link {
+            background-color: transparent;
+            color: #ffc107 !important;
+            font-weight: 500;
+            margin: 5px 8px;
+            border: 1px solid transparent;
+            border-radius: 30px;
+            padding: 8px 18px;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .custom-navbar .nav-link:hover {
+            background-color: #ffc107;
+            color: #1e1e1e !important;
+            border-color: #ffc107;
+        }
+
+        .custom-navbar .btn-nav {
+            background-color: #17a2b8;
+            color: white;
+            font-weight: 500;
+            border-radius: 30px;
+            padding: 8px 20px;
+            border: none;
+            margin: 5px 8px;
+            transition: all 0.3s;
+        }
+
+        .custom-navbar .btn-nav:hover {
+            background-color: #138496;
+            color: white;
+        }
+
+        .navbar-toggler {
+            border-color: #ffc107;
+        }
+
+        .navbar-toggler-icon {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='%23ffc107' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(255,193,7,1)' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+        }
+
+        /* === HEADER === */
         header.header {
-            background-image: url('/assets/images/header-bg.jpg'); /* Remplace avec le vrai chemin */
+            position: relative;
+            height: 100vh;
+            width: 100%;
+            background-image: url('/images_sections/accueil.jpg');
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
-            height: 100vh;
-            position: relative;
-        }
-
-        .overlay {
-            background: rgba(0, 0, 0, 0.6);
-            height: 100%;
-            width: 100%;
             display: flex;
-            flex-direction: column;
-            justify-content: center;
             align-items: center;
-            padding: 20px;
+            justify-content: center;
+            color: white;
             text-align: center;
         }
 
-        .overlay h1 {
-            font-size: 2.5rem;
-            color: #ffffff;
-            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
+        header.header::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 0;
         }
 
-        .overlay h2 {
-            font-size: 1.5rem;
-            color: #e0f7fa;
-            margin-bottom: 20px;
+        .header-content {
+            position: relative;
+            z-index: 1;
+            max-width: 900px;
+            padding: 0 20px;
         }
 
-        .overlay .btn {
-            padding: 12px 25px;
-            font-size: 1rem;
+        .header-content h1 {
+            font-size: 3.5rem;
+            font-weight: 900;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 6px rgba(0,0,0,0.7);
+        }
+
+        .header-content h2 {
+            font-size: 1.8rem;
+            font-weight: 400;
+            margin-bottom: 2rem;
+            color: #f0f9ff;
+            text-shadow: 1px 1px 4px rgba(0,0,0,0.6);
+        }
+
+        .header-content .btn-primary {
             background-color: #ff214f;
             border: none;
-            border-radius: 8px;
-            color: white;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            padding: 14px 36px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            border-radius: 50px;
+            box-shadow: 0 6px 15px rgba(255,33,79,0.5);
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
         }
 
-        .overlay .btn:hover {
+        .header-content .btn-primary:hover {
             background-color: #d91c44;
+            box-shadow: 0 8px 20px rgba(217,28,68,0.7);
+            color: white;
         }
 
-        @media (max-width: 768px) {
-            .overlay h1 {
-                font-size: 2rem;
+        /* Responsive */
+        @media (max-width: 992px) {
+            .header-content h1 {
+                font-size: 2.8rem;
             }
 
-            .overlay h2 {
-                font-size: 1.2rem;
+            .header-content h2 {
+                font-size: 1.4rem;
             }
 
-     .card-title {
-        font-size: 1.2rem;
-        font-weight: bold;
-    }
-    .form-check-label {
-        color: #ddd;
-    }
-    .card {
-        transition: transform 0.3s ease-in-out;
-    }
-    .card:hover {
-        transform: scale(1.02);
-    }
-
+            .header-content .btn-primary {
+                font-size: 1rem;
+                padding: 12px 20px;
             }
+        }
+
+        @media (max-width: 56px) {
+            .header-content h1 {
+                font-size: 2.2rem;
+            }
+
+            .header-content h2 {
+                font-size: 1.1rem;
+            }
+        }
     </style>
 </head>
 <body data-spy="scroll" data-target=".navbar" data-offset="40" id="home">
 
-    <!-- Navbar -->
-    <nav class="custom-navbar navbar navbar-expand-lg navbar-dark fixed-top" data-spy="affix" data-offset-top="10">
-        <button class="navbar-toggler" type="button" data-toggle="collapse"
-            data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
-            aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
+<!-- NAVBAR -->
+<nav class="custom-navbar navbar navbar-expand-lg navbar-dark fixed-top" data-spy="affix" data-offset-top="10">
+    <button class="navbar-toggler" type="button" data-toggle="collapse"
+        data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+        aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
 
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav">
-                <li class="nav-item">
-                    <a class="nav-link" href="#home"><i class="ti-home"></i> Accueil</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#about"><i class="ti-user"></i> À propos</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#gallary"><i class="ti-menu-alt"></i> Menu</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#book-table"><i class="ti-calendar"></i> Réserver</a>
-                </li>
-            </ul>
+    <div class="collapse navbar-collapse justify-content-center" id="navbarSupportedContent">
+        <ul class="navbar-nav text-center">
+            <li class="nav-item"><a class="nav-link" href="#home"><i class="ti-home"></i> Accueil</a></li>
+            <li class="nav-item"><a class="nav-link" href="#gallary"><i class="ti-menu-alt"></i> Menu</a></li>
+            <li class="nav-item"><a class="nav-link" href="#book"><i class="ti-calendar"></i> Réserver</a></li>
+            <li class="nav-item"><a class="nav-link" href="#blog"><i class="ti-bookmark-alt"></i> Plats</a></li>
+            <li class="nav-item"><a class="nav-link" href="#about"><i class="ti-user"></i> À propos</a></li>
 
-            <a class="navbar-brand m-auto" href="{{ url('/') }}">
-                <img src="#" class="brand-img" alt="">
-                <span class="brand-txt">HIMBI Market</span>
-            </a>
-
-            <ul class="navbar-nav">
-                <li class="nav-item">
-                    <a class="nav-link" href="#blog"><i class="ti-bookmark-alt"></i> Plats</a>
-                </li>
-
-                @if (Route::has('login'))
-                    @auth
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ url('my_cart') }}"><i class="ti-shopping-cart"></i> Panier</a>
-                        </li>
-                        <form action="{{ route('logout') }}" method="POST" class="ml-3">
+            @if (Route::has('login'))
+                @auth
+                    <li class="nav-item"><a class="nav-link" href="{{ url('my_cart') }}"><i class="ti-shopping-cart"></i> Panier</a></li>
+                    <li class="nav-item">
+                        <form action="{{ route('logout') }}" method="POST" class="d-inline-block">
                             @csrf
-                            <input type="submit" class="btn btn-sm btn-danger" value="Déconnecter">
+                            <button type="submit" class="btn btn-nav">Déconnexion</button>
                         </form>
-                    @else
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('login') }}"><i class="ti-user"></i> Se connecter</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('register') }}"><i class="ti-pencil-alt"></i> S'enregistrer</a>
-                        </li>
-                    @endauth
-                @endif
-            </ul>
-        </div>
-    </nav>
+                    </li>
+                @else
+                    <li class="nav-item">
+                        <a class="btn btn-nav" href="{{ route('login') }}"><i class="ti-user"></i> Se connecter</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn btn-nav" href="{{ route('register') }}"><i class="ti-pencil-alt"></i> S'enregistrer</a>
+                    </li>
+                @endauth
+            @endif
+        </ul>
+    </div>
+</nav>
 
-    <!-- Header -->
-    <header id="home" class="header">
-        <div class="overlay text-white text-center">
-            <h1 class="display-2 font-weight-bold my-3">Himbi Market</h1>
-            <h2 class="display-4 mb-5">Votre table, notre passion !</h2>
-            <a class="btn btn-lg btn-primary" href="#gallary">Voir Notre Galerie</a>
-        </div>
-    </header>
-
-    @include('home.about')
-    @include('home.gallary')
-    @include('home.book')
-    @include('home.blog')
-    @include('home.footer')
+<!-- HEADER -->
+<header id="home" class="header">
+    <div class="header-content">
+        <h1>Himbi Market</h1>
+        <h2>Votre table, notre passion !</h2>
+        <a class="btn btn-primary" href="#gallary">Voir Notre Galerie</a>
+    </div>
+</header>
 
 </body>
 </html>

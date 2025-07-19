@@ -4,25 +4,22 @@
 @endphp
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
-	@include('home.css')
+    @include('home.css')
 </head>
 <body data-spy="scroll" data-target=".navbar" data-offset="40" id="home">
-    
-   @include('home.header')
-   
-    <!--  About Section  -->
-    @include('home.about')
-    <!--  gallary Section  -->
-    @include('home.gallary')
 
-    <!-- book a table Section  -->
+
+    @yield('content') {{-- 🟡 C’est ici que le contenu de my_cart sera injecté --}}
+
+    @include('home.header')
+     @include('home.gallary')
     @include('home.book')
-    <!-- BLOG Section  -->
     @include('home.blog')
-    <!-- REVIEWS Section  -->
+    @include('home.about')
     @include('home.footer')
-
+ 
 </body>
 </html>
+

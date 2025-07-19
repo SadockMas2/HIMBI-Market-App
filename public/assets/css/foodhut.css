@@ -11415,3 +11415,99 @@ pre {
   visibility: visible;
   opacity: 1;
 }
+
+
+
+
+
+/* ==================== */
+/* MOBILE RESPONSIVENESS */
+/* ==================== */
+@media (max-width: 768px) {
+  /* Reset de base */
+  body {
+    font-size: 14px;
+    line-height: 1.4;
+    overflow-x: hidden;
+  }
+
+  /* Correction des conteneurs */
+  .container, 
+  .container-fluid {
+    padding-left: 10px;
+    padding-right: 10px;
+    max-width: 100%;
+  }
+
+  /* Typographie responsive */
+  h1, .h1 { font-size: 1.8rem; }
+  h2, .h2 { font-size: 1.5rem; }
+  h3, .h3 { font-size: 1.3rem; }
+
+  /* Système de grille */
+  .row {
+    flex-direction: column;
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  [class*="col-"] {
+    width: 100%;
+    max-width: 100%;
+    padding-left: 0;
+    padding-right: 0;
+    margin-bottom: 15px;
+  }
+
+  /* Navigation */
+  .navbar {
+    padding: 10px 0;
+  }
+
+  .navbar-nav {
+    flex-direction: column;
+  }
+
+  .nav-link {
+    padding: 8px 0;
+  }
+
+  /* Formulaires */
+  .form-control {
+    height: auto;
+    padding: 10px;
+  }
+
+  .form-group {
+    margin-bottom: 15px;
+  }
+
+  /* Boutons */
+  .btn {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    margin: 5px 0;
+  }
+
+  /* Cartes */
+  .card {
+    margin-bottom: 15px;
+  }
+
+  /* Images */
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  /* Masquer certains éléments si nécessaire */
+  .desktop-only {
+    display: none !important;
+  }
+
+  /* Afficher les éléments mobiles */
+  .mobile-only {
+    display: block !important;
+  }
+}
