@@ -26,6 +26,7 @@ class HomeController extends Controller
             return view('home.index', compact('data', 'tables'));
         }
 
+     
 
         public function index()
         {

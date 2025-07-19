@@ -10,6 +10,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>HIMBI Market | Goma</title>
 
+    <!-- Bootstrap 5 CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
     @include('home.css')
 
     <style>
@@ -151,43 +154,54 @@
         }
     </style>
 </head>
-<body data-spy="scroll" data-target=".navbar" data-offset="40" id="home">
+<body data-bs-spy="scroll" data-bs-target=".navbar" data-bs-offset="40" id="home">
 
 <!-- NAVBAR -->
-<nav class="custom-navbar navbar navbar-expand-lg navbar-dark fixed-top" data-spy="affix" data-offset-top="10">
-    <button class="navbar-toggler" type="button" data-toggle="collapse"
-        data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
-        aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
+<nav class="custom-navbar navbar navbar-expand-lg navbar-dark fixed-top" data-bs-spy="affix" data-bs-offset="10">
+    <div class="container">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+            data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+            aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
-    <div class="collapse navbar-collapse justify-content-center" id="navbarSupportedContent">
-        <ul class="navbar-nav text-center">
-            <li class="nav-item"><a class="nav-link" href="#home"><i class="ti-home"></i> Accueil</a></li>
-            <li class="nav-item"><a class="nav-link" href="#gallary"><i class="ti-menu-alt"></i> Menu</a></li>
-            <li class="nav-item"><a class="nav-link" href="#book"><i class="ti-calendar"></i> Réserver</a></li>
-            <li class="nav-item"><a class="nav-link" href="#blog"><i class="ti-bookmark-alt"></i> Plats</a></li>
-            <li class="nav-item"><a class="nav-link" href="#about"><i class="ti-user"></i> À propos</a></li>
+        <div class="collapse navbar-collapse justify-content-center" id="navbarSupportedContent">
+            <ul class="navbar-nav text-center">
+                <li class="nav-item"><a class="nav-link" href="#home"><i class="ti-home"></i> Accueil</a></li>
+                <li class="nav-item"><a class="nav-link" href="#gallary"><i class="ti-menu-alt"></i> Menu</a></li>
+                <li class="nav-item"><a class="nav-link" href="#book"><i class="ti-calendar"></i> Réserver</a></li>
+                <li class="nav-item"><a class="nav-link" href="#blog"><i class="ti-bookmark-alt"></i> Plats</a></li>
+                <li class="nav-item"><a class="nav-link" href="#about"><i class="ti-user"></i> À propos</a></li>
 
-            @if (Route::has('login'))
-                @auth
-                    <li class="nav-item"><a class="nav-link" href="{{ url('my_cart') }}"><i class="ti-shopping-cart"></i> Panier</a></li>
-                    <li class="nav-item">
-                        <form action="{{ route('logout') }}" method="POST" class="d-inline-block">
-                            @csrf
-                            <button type="submit" class="btn btn-nav">Déconnexion</button>
-                        </form>
-                    </li>
-                @else
-                    <li class="nav-item">
-                        <a class="btn btn-nav" href="{{ route('login') }}"><i class="ti-user"></i> Se connecter</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="btn btn-nav" href="{{ route('register') }}"><i class="ti-pencil-alt"></i> S'enregistrer</a>
-                    </li>
-                @endauth
-            @endif
-        </ul>
+                @if (Route::has('login'))
+                    @auth
+                        <li class="nav-item"><a class="nav-link" href="{{ url('my_cart') }}"><i class="ti-shopping-cart"></i> Panier</a></li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-warning fw-bold" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="ti-user me-1"></i> {{ Auth::user()->name }}
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                                <li><a class="dropdown-item" href="{{ route('profile.show') }}">👤 Mon Profil</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <form method="POST" action="{{ route('logout') }}">
+                                        @csrf
+                                        <button type="submit" class="dropdown-item">🚪 Se déconnecter</button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </li>
+                    @else
+                        <li class="nav-item">
+                            <a class="btn btn-nav" href="{{ route('login') }}"><i class="ti-user"></i> Se connecter</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="btn btn-nav" href="{{ route('register') }}"><i class="ti-pencil-alt"></i> S'enregistrer</a>
+                        </li>
+                    @endauth
+                @endif
+            </ul>
+        </div>
     </div>
 </nav>
 
@@ -199,6 +213,9 @@
         <a class="btn btn-primary" href="#gallary">Voir Notre Galerie</a>
     </div>
 </header>
+
+<!-- Bootstrap 5 JS Bundle -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 </html>

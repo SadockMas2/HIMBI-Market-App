@@ -10,16 +10,19 @@
 </head>
 <body data-spy="scroll" data-target=".navbar" data-offset="40" id="home">
 
+    {{-- 🟡 Le contenu principal sera injecté ici (comme my_cart, home, etc.) --}}
+    @yield('content')
 
-    @yield('content') {{-- 🟡 C’est ici que le contenu de my_cart sera injecté --}}
+    {{-- 🟢 Afficher ces sections seulement si l'utilisateur est connecté --}}
+    @auth
+        @include('home.header')
+        @include('home.gallary')
+        @include('home.book')
+        @include('home.blog')
+        @include('home.about')
+    @endauth
 
-    @include('home.header')
-     @include('home.gallary')
-    @include('home.book')
-    @include('home.blog')
-    @include('home.about')
+    {{-- Footer peut rester visible ou être aussi conditionné --}}
     @include('home.footer')
- 
 </body>
 </html>
-
