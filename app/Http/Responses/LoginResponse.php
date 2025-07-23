@@ -14,7 +14,7 @@ class LoginResponse implements LoginResponseContract
         if ($user->usertype === 'serveur') {
             return redirect()->intended('/serveur/board');
         } elseif ($user->usertype === 'admin') {
-            return redirect()->intended('/admin/body');
+            return redirect()->intended('/home');
         }
 
         return redirect()->intended('/home');

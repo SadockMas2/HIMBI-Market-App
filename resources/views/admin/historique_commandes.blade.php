@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Historique des commandes du serveur #{{ request()->route('serveurId') }}</title>
-
+    @extends('admin.index')
     @include('admin.css')
 </head>
 <body>

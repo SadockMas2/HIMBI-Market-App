@@ -4585,7 +4585,7 @@ input[type="button"].btn-block {
 
 
 .navbar {
-  position: relative;
+  position: fixed;
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -11230,6 +11230,7 @@ pre {
 }
 
 .header {
+  position: fixed;
   height: 100vh;
   max-height: 900px;
   background: url(../imgs/main.jpg) no-repeat center center fixed;

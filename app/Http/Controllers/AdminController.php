@@ -164,10 +164,32 @@ class AdminController extends Controller
 
         public function orders()
         {
-            $data = Order::all();
+            // Récupérer toutes les commandes triées par date décroissante
+            $orders = Order::orderBy('created_at', 'desc')->get();
 
-            return view('admin.order',compact('data'));
+            // Grouper les commandes par client (ici par email, tu peux aussi grouper par user_id si tu as)
+            $groupedOrders = $orders->groupBy('email');
+
+            return view('admin.order', compact('groupedOrders'));
         }
+
+        public function deliverAll($email)
+        {
+            \App\Models\Order::where('email', $email)
+                ->update(['delivery_status' => 'livré']);
+            
+            return redirect()->back()->with('success', "Toutes les commandes de $email ont été livrées.");
+        }
+
+        public function cancelAll($email)
+        {
+            // Supposons que "vider le panier" signifie supprimer les commandes
+            \App\Models\Order::where('email', $email)->delete();
+            
+            return redirect()->back()->with('success', "Toutes les commandes de $email ont été annulées et supprimées.");
+        }
+
+
 
 
         public function store_order(Request $request)
@@ -499,6 +521,17 @@ class AdminController extends Controller
                     ->setPaper('A4', 'landscape');
 
             return $pdf->download('historique_commandes.pdf');
+        }
+
+
+        private function getDashboardStats()
+        {
+            return [
+                'total_utilisateurs' => User::count(),
+                'total_plats' => Food::count(),
+                'total_commandes' => Order::count(),
+                'total_reservations' => Reservation::count(),
+            ];
         }
 
 

@@ -48,43 +48,48 @@
     <div class="container-fluid">
         <h2>Commandes des clients</h2>
 
-      
-            <table class="table table-bordered table-striped table-hover text-white">
-                <thead class="table-dark">
-                    <tr>
-                     <th>ID du plat</th>
-                            <th>Nom Client</th>
+                    
+                        <table>
+                    <thead>
+                        <tr>
+                            <th>Client</th>
                             <th>Email</th>
                             <th>Téléphone</th>
                             <th>Adresse</th>
-                            <th>Plat</th>
-                            <th>Quantité</th>
-                            <th>Prix</th>
-                            <th>Image</th>
-                            <th>Statut Livraison</th>
-                            <th>Changer Statut</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    
-                        @foreach ($data as $data )
-                            
-                      
-                    <tr>
-                                <td>{{ $data->food_id }}</td>
-                                <td>{{ $data->name }}</td>
-                                <td>{{ $data->email }}</td>
-                                <td>{{ $data->phone }}</td>
-                                <td>{{ $data->adress }}</td>
-                                <td>{{ $data->title }}</td>
-                                <td>{{ $data->quantity }}</td>
-                                <td>{{ number_format($data->price, 2, ',', ' ') }} $</td>
+                            <th>Commandes</th>
+                            <th>Total général ($)</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($groupedOrders as $email => $orders)
+                            @php
+                                $client = $orders->first();
+                                $totalClient = $orders->sum('price');
+                            @endphp
+                            <tr>
+                                <td>{{ $client->name }}</td>
+                                <td>{{ $client->email }}</td>
+                                <td>{{ $client->phone }}</td>
+                                <td>{{ $client->adress }}</td>
                                 <td>
-                                    <img src="{{ asset('food_img/' . $data->image) }}" alt="Image de {{ $data->title }}" />
-                    </tr>
-                    @endforeach
-                </tbody>
-            </table>
-   
+                                    <ul style="list-style:none; padding-left:0; text-align:left;">
+                                        @foreach ($orders as $order)
+                                            <li>{{ $order->title }} x {{ $order->quantity }} ({{ number_format($order->price, 2, ',', ' ') }} $)</li>
+                                        @endforeach
+                                    </ul>
+                                </td>
+                                <td><strong>{{ number_format($totalClient, 2, ',', ' ') }}</strong></td>
+                                <td>
+                                    {{-- Exemple simple d’action sur la première commande du client --}}
+                                    <a href="{{ url('on_the_way', $client->id) }}" class="btn btn-info">En cours</a>
+                                    <a href="{{ url('delivered', $client->id) }}" class="btn btn-warning">Livré</a>
+                                    <a href="{{ url('canceled', $client->id) }}" class="btn btn-danger">Annulé</a>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+
     </div>
 @endsection

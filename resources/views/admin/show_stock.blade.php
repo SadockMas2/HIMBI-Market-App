@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -6,6 +7,7 @@
   <title>Stock des Plats</title>
 
   @include('admin.css')
+  
 
   <style>
     body {
@@ -24,6 +26,8 @@
       border-radius: 12px;
       box-shadow: 0 6px 20px rgb(0 0 0 / 0.1);
     }
+
+    
 
     h2 {
       font-weight: 700;

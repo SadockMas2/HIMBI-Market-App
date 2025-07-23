@@ -27,7 +27,8 @@ Route::middleware('auth')->group(function () {
     // Routes liées au panier / commandes
     Route::post('/add_cart/{id}', [HomeController::class, 'add_cart']);
     Route::get('/my_cart', [HomeController::class, 'my_cart'])->name('my_cart');
-    Route::post('/update_cart/{id}', [HomeController::class, 'update_cart']);
+    Route::post('/update_cart/{id}', [HomeController::class, 'update_cart'])->middleware('auth');
+    Route::post('/update_cart_multiple', [HomeController::class, 'update_cart_multiple'])->middleware('auth');
     Route::get('/remove_cart/{id}', [HomeController::class, 'remove_cart']);
     Route::post('/confirm_order', [HomeController::class, 'confirm_order']);
     Route::post('/add_cart_multiple', [HomeController::class, 'add_cart_multiple'])->name('add_cart_multiple');
@@ -59,6 +60,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/add_table', [AdminController::class, 'add_table']);
     Route::put('/update_table_status/{id}', [AdminController::class, 'update_table_status']);
     Route::get('/orders', [AdminController::class, 'orders']);
+    Route::get('/deliver_all/{email}', [AdminController::class, 'deliverAll'])->name('deliver_all');
+    Route::get('/cancel_all/{email}', [AdminController::class, 'cancelAll'])->name('cancel_all');
     Route::post('/store_order', [AdminController::class, 'store_order']);
     Route::get('on_the_way/{id}', [AdminController::class, 'on_the_way']);
     Route::get('delivered/{id}', [AdminController::class, 'delivered']);

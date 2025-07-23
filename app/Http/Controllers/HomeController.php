@@ -92,7 +92,8 @@ class HomeController extends Controller
                             $cart->save();
                         }
 
-                        return redirect()->back()->with('success', 'Ajouté au panier.');
+                        return redirect()->route('my_cart')->with('success', 'Ajouté au panier.');
+
                     } else {
                         return redirect("login");
                     }
@@ -140,7 +141,8 @@ class HomeController extends Controller
                         }
                     }
 
-                    return redirect()->back()->with('success', 'Les plats sélectionnés ont été ajoutés au panier.');
+                return redirect()->route('my_cart')->with('success', 'Les plats sélectionnés ont été ajoutés au panier.');
+
                 }
 
                 // Afficher le panier
@@ -221,25 +223,73 @@ class HomeController extends Controller
 
 
     // Mise à jour de la quantité dans le panier
-    public function update_cart(Request $request, $cart_id)
-    {
-        $cart = Cart::find($cart_id);
-        if (!$cart) {
-            return back()->with('error', 'Article non trouvé dans le panier.');
+            public function update_cart(Request $request, $cart_id)
+        {
+            if (!Auth::check()) {
+                return redirect()->route('login')->with('error', 'Veuillez vous connecter pour modifier le panier.');
+            }
+
+            $cart = Cart::where('id', $cart_id)
+                        ->where('userid', Auth::id())
+                        ->first();
+
+            if (!$cart) {
+                return back()->with('error', 'Article non trouvé dans votre panier.');
+            }
+
+            $quantity = (int) $request->quantity;
+            if ($quantity < 1) {
+                return back()->with('error', 'La quantité doit être au moins 1.');
+            }
+
+            $food = Food::find($cart->food_id);
+            if (!$food) {
+                return back()->with('error', 'Plat introuvable.');
+            }
+
+            $cart->quantity = $quantity;
+            $cart->price = $food->price * $quantity;
+            $cart->save();
+
+            return back()->with('success', 'Quantité mise à jour avec succès.');
         }
 
-        $quantity = (int) $request->quantity;
-        if ($quantity < 1) {
-            return back()->with('error', 'La quantité doit être au moins 1.');
+        public function update_cart_multiple(Request $request)
+        {
+            if (!Auth::check()) {
+                return redirect()->route('login')->with('error', 'Veuillez vous connecter pour modifier le panier.');
+            }
+
+            $cart_ids = $request->input('cart_id', []);
+            $quantities = $request->input('quantity', []);
+
+            foreach ($cart_ids as $index => $cart_id) {
+                $quantity = isset($quantities[$index]) ? (int)$quantities[$index] : 1;
+                if ($quantity < 1) {
+                    continue; // ignore quantités invalides
+                }
+
+                $cart = Cart::where('id', $cart_id)
+                            ->where('userid', Auth::id())
+                            ->first();
+
+                if (!$cart) {
+                    continue; // ignore éléments pas trouvés
+                }
+
+                $food = Food::find($cart->food_id);
+                if (!$food) {
+                    continue; // ignore plat non trouvé
+                }
+
+                $cart->quantity = $quantity;
+                $cart->price = $food->price * $quantity;
+                $cart->save();
+            }
+
+            return back()->with('success', 'Quantités mises à jour avec succès.');
         }
 
-        $cart->quantity = $quantity;
-        // Mettre à jour le prix total dans le panier si tu le stockes
-        $cart->price = $cart->food->price * $quantity; // exemple
-        $cart->save();
-
-        return back()->with('success', 'Quantité mise à jour avec succès.');
-    }
 
     // Suppression d’un article du panier
     public function remove_cart($cart_id)
