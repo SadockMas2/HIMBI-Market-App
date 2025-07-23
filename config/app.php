@@ -165,6 +165,28 @@ return [
     'Pdf'       => Barryvdh\DomPDF\Facade\Pdf::class,
 ],
 
+'providers' => [
+
+    Illuminate\Auth\AuthServiceProvider::class,
+    Illuminate\Broadcasting\BroadcastServiceProvider::class,
+    Illuminate\Bus\BusServiceProvider::class,
+    Illuminate\Cache\CacheServiceProvider::class,
+    Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
+    Illuminate\Cookie\CookieServiceProvider::class,
+    Illuminate\Database\DatabaseServiceProvider::class,
+    Illuminate\Encryption\EncryptionServiceProvider::class,
+    Illuminate\Filesystem\FilesystemServiceProvider::class,
+    Illuminate\Session\SessionServiceProvider::class,
+    Illuminate\Foundation\Providers\FoundationServiceProvider::class,
+    Illuminate\View\ViewServiceProvider::class, // ✅ cette ligne doit exister
+    Illuminate\Hashing\HashServiceProvider::class,
+    Illuminate\View\ViewServiceProvider::class,
+    Illuminate\Validation\ValidationServiceProvider::class,
+    Illuminate\Translation\TranslationServiceProvider::class,
+    App\Providers\RouteServiceProvider::class,
+    App\Providers\FortifyServiceProvider::class,
+],
+
 
 
 ];

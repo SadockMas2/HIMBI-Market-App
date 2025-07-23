@@ -14,11 +14,10 @@ use Illuminate\Support\Facades\Auth;
 
 // Page d'accueil publique ou redirection si connecté
 Route::get('/', function () {
-    if (Auth::check()) {
-        return redirect('/home');
-    } 
+    // page publique de bienvenue, accessible même si connecté
     return view('bienvenue');
 });
+
 
 // Page d'accueil principale (sections scrollables)
 // Protégée par auth (connexion obligatoire)
@@ -97,9 +96,14 @@ Route::middleware('auth')->group(function () {
 |--------------------------------------------------------------------------
 */
 Route::middleware('auth')->group(function () {
-    Route::get('dashboard-serveur', [ServeurController::class, 'dashboard']);
+ 
+    Route::get('/serveur/board', [ServeurController::class, 'board'])
+    ->middleware(['auth', 'verified']) // important !
+    ->name('serveur.board');
+
     Route::get('nouvelle_commande', [ServeurController::class, 'nouvelleCommande'])->name('serveur.commande.form');
     Route::post('enregistrer_commande', [ServeurController::class, 'enregistrerCommande'])->name('serveur.commande.store');
+    Route::post('/serveur/commande-multiple', [ServeurController::class, 'enregistrerCommandeMultiple'])->name('serveur.commande.storeMultiple');
     Route::get('mesTables', [ServeurController::class, 'mesTables'])->name('serveur.mesTables');
     Route::post('serveur/reserver_table', [ServeurController::class, 'reserverTable'])->name('serveur.reserver_table');
     Route::get('stock-alerts', [ServeurController::class, 'stockAlerts']);
@@ -124,6 +128,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/serveur/commandes-en-ligne', [ServeurController::class, 'commandesEnLigneDisponibles'])->name('serveur.commandes_en_ligne');
     Route::post('/serveur/prendre-commande-en-ligne', [ServeurController::class, 'prendreCommandeEnLigne'])->name('serveur.prendre_commande_en_ligne');
     Route::post('/serveur/prendre-commandes-client', [ServeurController::class, 'prendreCommandesClient'])->name('serveur.prendre_commandes_client');
+    
+
 });
 
 
@@ -132,11 +138,7 @@ Route::middleware('auth')->group(function () {
 | Route Dashboard Jetstream
 |--------------------------------------------------------------------------
 */
-Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified'])->group(function () {
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
-});
+
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/user/profile', [\Laravel\Jetstream\Http\Controllers\Livewire\UserProfileController::class, 'show'])->name('profile.show');

@@ -11,11 +11,14 @@
     </div>
 
     <ul class="list-unstyled">
+       
+
         <li class="mb-3">
-            <a href="{{ url('serveur/dashboard') }}" class="text-white d-flex align-items-center">
-                <i class="fa fa-home me-2"></i> <span>Accueil</span>
+            <a href="{{ route('serveur.board') }}" class="text-white d-flex align-items-center">
+                <i class="fa fa-chart-bar me-2"></i> <span>Tableau de bord</span>
             </a>
         </li>
+
 
         <li class="mb-3">
             <a href="{{ url('serveur/commandes-en-ligne') }}" class="text-white d-flex align-items-center">

@@ -140,25 +140,59 @@ class ServeurController extends Controller
         }
 
 
-        public function enregistrerCommande(Request $request)
+            public function enregistrerCommande(Request $request)
         {
             $request->validate([
                 'table_id' => 'required|exists:tables,id',
-                'food_id' => 'required|exists:food,id',
-                'quantite' => 'required|integer|min:1'
+                'foods' => 'required|array|min:1',
+                'foods.*.food_id' => 'required|exists:food,id',
+                'foods.*.quantite' => 'required|integer|min:1',
             ]);
 
-            ServerOrder::create([
+            // Étape 1 : Créer la commande principale
+            $serverOrder = ServerOrder::create([
                 'serveur_id' => Auth::id(),
                 'table_id' => $request->table_id,
-                'food_id' => $request->food_id,
-                'quantite' => $request->quantite,
                 'statut' => 'en_attente',
             ]);
 
-            return redirect()->route('serveur.mesTables')->with('success', 'Commande enregistrée avec succès.');
+            // Étape 2 : Ajouter tous les plats commandés
+            foreach ($request->foods as $item) {
+                Order::create([
+                    'server_order_id' => $serverOrder->id,
+                    'food_id' => $item['food_id'],
+                    'quantite' => $item['quantite'],
+                    'status' => 'non payé',
+                ]);
+            }
 
+            return redirect()->route('serveur.mesTables')->with('success', 'Commande enregistrée avec succès.');
         }
+
+
+        public function enregistrerCommandeMultiple(Request $request)
+        {
+            $request->validate([
+                'table_id' => 'required|exists:tables,id',
+                'food_id' => 'required|array|min:1',
+                'quantite' => 'required|array|min:1',
+                'food_id.*' => 'required|exists:food,id',
+                'quantite.*' => 'required|integer|min:1',
+            ]);
+
+            foreach ($request->food_id as $index => $foodId) {
+                ServerOrder::create([
+                    'serveur_id' => Auth::id(),
+                    'table_id' => $request->table_id,
+                    'food_id' => $foodId,
+                    'quantite' => $request->quantite[$index],
+                    'statut' => 'en_attente',
+                ]);
+            }
+
+            return redirect()->route('serveur.mesTables')->with('success', 'Commande enregistrée avec plusieurs plats.');
+        }
+
 
         public function reserverTable(Request $request)
         {
@@ -406,5 +440,31 @@ class ServeurController extends Controller
                 return redirect()->back()->with('success', 'Paiement des commandes effectué. Table libérée.');
             }
 
+            
+             public function board()
+            {
+                $serveurId = Auth::id();
+
+                $commandesJour = ServerOrder::whereDate('created_at', today())
+                                    ->where('serveur_id', $serveurId)
+                                    ->count();
+
+                $tablesServies = ServerOrder::whereDate('created_at', today())
+                                    ->where('serveur_id', $serveurId)
+                                    ->distinct('table_id')
+                                    ->count('table_id');
+
+                $reservationsActives = Book::whereDate('date', today())
+                                    ->where('payment_status', 'non_payé') // ou 'payé', selon ta logique
+                                    ->count();;
+
+                $platsServis = ServerOrder::whereDate('created_at', today())
+                                    ->where('serveur_id', $serveurId)
+                                    ->sum('quantite');
+
+                return view('serveur.board', compact(
+                    'commandesJour', 'tablesServies', 'reservationsActives', 'platsServis'
+                ));
+            }
 
 }
