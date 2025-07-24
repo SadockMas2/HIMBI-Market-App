@@ -95,7 +95,7 @@
 </style>
 
 <div class="page-content">
-    <h2>Nouvelle Commande Multi-Plats</h2>
+    <h2>Nouvelle Commande </h2>
 
     @if(session('success'))
         <div class="alert alert-success">{{ session('success') }}</div>
