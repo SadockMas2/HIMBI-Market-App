@@ -205,6 +205,17 @@
     </div>
 </nav>
 
+@if (session('commande_success'))
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        {{ session('commande_success') }}
+        @if(session('pdf_url'))
+            <a href="{{ session('pdf_url') }}" class="btn btn-sm btn-primary ml-3">📄 Télécharger le PDF</a>
+        @endif
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+@endif
+
+
 <!-- HEADER -->
 <header id="home" class="header">
     <div class="header-content">
@@ -212,6 +223,8 @@
         <h2>Votre table, notre passion !</h2>
         <a class="btn btn-primary" href="#gallary">Voir Notre Galerie</a>
     </div>
+
+       
 </header>
 
 <!-- Bootstrap 5 JS Bundle -->

@@ -40,7 +40,8 @@
                 <ul id="dropdownPlats" class="collapse list-unstyled">
                   <li><a href="{{ url('add_food') }}">Ajouter un plat</a></li>
                   <li><a href="{{ url('view_food') }}">Voir les plats</a></li>
-                </ul>
+                 
+               </ul>
               </li>
 
               <li>
@@ -82,7 +83,7 @@
 
                 <li>
                   <a href="{{ url('orders') }}"> <i 
-                  class="fa fa-shopping-cart"></i>Panier
+                  class="fa fa-shopping-cart"></i>Paniers
                   </a>               
                 </li>
 

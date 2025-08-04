@@ -124,9 +124,7 @@
     <div class="text-light-position">
         <h2 class="section-title mb-5">NOS PLATS</h2>
 
-        @if(session('success'))
-            <div class="alert alert-success text-center">{{ session('success') }}</div>
-        @endif
+       
         @if(session('error'))
             <div class="alert alert-danger text-center">{{ session('error') }}</div>
         @endif

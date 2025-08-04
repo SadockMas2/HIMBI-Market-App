@@ -82,11 +82,17 @@
                     <th>Nom</th>
                     <th>Capacité</th>
                     <th>Statut</th>
+                    <th>Commandes en attente</th>
+                    <th>Commandes payées</th>
                     <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
                 @forelse ($tables as $table)
+                    @php
+                        $nonPayees = $table->commandes->where('payment_status', 'non_payé');
+                        $payees = $table->commandes->where('payment_status', 'payé');
+                    @endphp
                     <tr>
                         <td>{{ $table->nom_table }}</td>
                         <td>{{ $table->capacite }}</td>
@@ -99,73 +105,52 @@
                                 <span class="badge bg-warning text-dark">{{ ucfirst($table->statut) }}</span>
                             @endif
                         </td>
+
+                        <td style="text-align: left;">
+                            @if($nonPayees->count())
+                                <ul>
+                                    @foreach($nonPayees as $cmd)
+                                        <li>{{ $cmd->food->title ?? 'Produit inconnu' }} x{{ $cmd->quantite }}</li>
+                                    @endforeach
+                                </ul>
+                            @else
+                                <em>Aucune commande en attente</em>
+                            @endif
+                        </td>
+
+                        <td style="text-align: left;">
+                            @if($payees->count())
+                                <ul>
+                                    @foreach($payees as $cmd)
+                                        <li>{{ $cmd->food->title ?? 'Produit inconnu' }} x{{ $cmd->quantite }}</li>
+                                    @endforeach
+                                </ul>
+                            @else
+                                <em>Aucune commande payée</em>
+                            @endif
+                        </td>
+
                         <td>
-                            {{-- Réservation --}}
-                            @if($table->statut === 'Disponible')
-                                <form action="{{ route('serveur.reserver_table') }}" method="POST">
+                            {{-- Bouton pour payer toutes les commandes non payées --}}
+                            @if($nonPayees->count())
+                                <form action="{{ route('serveur.commandes.payer_groupes', $table->id) }}" method="POST" style="display:inline;">
                                     @csrf
-                                    <input type="hidden" name="table_id" value="{{ $table->id }}">
-                                    <button type="submit" class="btn btn-warning btn-sm">Réserver</button>
-                                </form>
-                            @endif
-
-                            {{-- Paiement Réservation --}}
-                            @if($table->statut === 'Réservée' && $table->reservation)
-                                <form action="{{ route('serveur.reservation.payer', $table->id) }}" method="POST">
-                                    @csrf @method('PUT')
-                                    <button type="submit" class="btn btn-success btn-sm">Payer Réservation</button>
+                                    @method('PUT')
+                                    <button type="submit" class="btn btn-success btn-sm mb-1">Payer commandes</button>
                                 </form>
 
-                                <a href="{{ route('facture.reservation', $table->id) }}" target="_blank" class="btn btn-primary btn-sm">Facture Réservation</a>
-
-                                @if($table->reservation->payment_status === 'payé')
-                                    <a href="{{ route('recu.reservation', $table->id) }}" target="_blank" class="btn btn-secondary btn-sm">Reçu Réservation</a>
-                                @endif
+                                <a href="{{ route('facture.commandes', $table->id) }}" target="_blank" class="btn btn-primary btn-sm mb-1">Facture</a>
                             @endif
 
-                            {{-- Commandes --}}
-                            @php
-                                $nonPayees = $table->commandes->where('payment_status', 'non_payé');
-                                $payees = $table->commandes->where('payment_status', 'payé');
-                            @endphp
-
-                            @if($nonPayees->count() || $payees->count())
-                                <hr>
-                                <strong>Commandes :</strong><br><br>
-
-                                {{-- Commandes non payées --}}
-                                @if($nonPayees->count())
-                                    <div>
-                                        <strong>Commandes en attente :</strong><br>
-                                        @foreach($nonPayees as $cmd)
-                                            • {{ $cmd->food->title ?? 'Produit inconnu' }} x{{ $cmd->quantite }}<br>
-                                        @endforeach
-
-                                        <form action="{{ route('serveur.commandes.payer_groupes', $table->id) }}" method="POST">
-                                            @csrf @method('PUT')
-                                            <button type="submit" class="btn btn-success btn-sm mt-2">Payer Commandes</button>
-                                        </form>
-
-                                        <a href="{{ route('facture.commandes', $table->id) }}" target="_blank" class="btn btn-primary btn-sm">Facture</a>
-                                    </div>
-                                @endif
-
-                                {{-- Commandes payées --}}
-                                @if($payees->count())
-                                    <div class="mt-3">
-                                        <strong>Commandes payées :</strong><br>
-                                        @foreach($payees as $cmd)
-                                            • {{ $cmd->food->title ?? 'Produit inconnu' }} x{{ $cmd->quantite }}<br>
-                                        @endforeach
-                                        <a href="{{ route('recu.commandes', $table->id) }}" target="_blank" class="btn btn-secondary btn-sm mt-2">Reçu</a>
-                                    </div>
-                                @endif
+                            {{-- Bouton pour voir le reçu si commandes payées --}}
+                            @if($payees->count())
+                                <a href="{{ route('recu.commandes', $table->id) }}" target="_blank" class="btn btn-secondary btn-sm">Reçu</a>
                             @endif
                         </td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="4" class="text-center">Aucune table assignée.</td>
+                        <td colspan="6" class="text-center">Aucune table assignée.</td>
                     </tr>
                 @endforelse
             </tbody>

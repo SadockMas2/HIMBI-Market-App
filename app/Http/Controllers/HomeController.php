@@ -9,11 +9,11 @@ use App\Models\Cart;
 use App\Models\Order;
 use App\Models\Book;
 use App\Models\Table;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Queue\RedisQueue;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
-
-
 
 
 class HomeController extends Controller
@@ -64,6 +64,30 @@ class HomeController extends Controller
         }
 
 
+
+        public function store_order(Request $request)
+        {
+            $order = new Order();
+
+            // autres champs...
+            $order->name = $request->name;
+            $order->email = $request->email;
+            $order->phone = $request->phone;
+            $order->adress = $request->adress;
+            $order->title = $request->title;
+            $order->price = $request->price;
+            $order->quantity = $request->quantity;
+            $order->image = $request->image;
+            $order->food_id = $request->food_id;
+
+            // Nettoyer le statut et le rendre constant
+            $order->delivery_status = 'In Progress'; // PAS de saut de ligne ou tabulation
+
+            // ou plus sécurisé :
+            // $order->delivery_status = trim('In Progress');
+
+            $order->save();
+        }
 
                 // Ajouter un plat au panier
                 public function add_cart(Request $request, $id)
@@ -165,61 +189,90 @@ class HomeController extends Controller
 
 
     // Confirmation de la commande (envoi de tout le panier)
-    public function confirm_order(Request $request)
-    {
-        $user_id = Auth::id();
 
-        // Récupération des arrays en toute sécurité
-        $food_ids = $request->input('food_id', []);
-        $titles = $request->input('title', []);
-        $quantities = $request->input('quantity', []);
-        $prices = $request->input('price', []);
+                public function confirm_order(Request $request)
+            {
+                $user_id = Auth::id();
 
-        // Forcer en tableau si ce n'est pas déjà
-        if (!is_array($food_ids)) $food_ids = [$food_ids];
-        if (!is_array($titles)) $titles = [$titles];
-        if (!is_array($quantities)) $quantities = [$quantities];
-        if (!is_array($prices)) $prices = [$prices];
+                $food_ids = $request->input('food_id', []);
+                $titles = $request->input('title', []);
+                $quantities = $request->input('quantity', []);
+                $prices = $request->input('price', []);
 
-        // Nettoyer les index valides
-        $valid_indexes = [];
-        foreach ($food_ids as $index => $food_id) {
-            if (!empty($food_id)) {
-                $valid_indexes[] = $index;
+                // Sécurité : forcer les tableaux
+                if (!is_array($food_ids)) $food_ids = [$food_ids];
+                if (!is_array($titles)) $titles = [$titles];
+                if (!is_array($quantities)) $quantities = [$quantities];
+                if (!is_array($prices)) $prices = [$prices];
+
+                $valid_indexes = [];
+                foreach ($food_ids as $index => $food_id) {
+                    if (!empty($food_id)) {
+                        $valid_indexes[] = $index;
+                    }
+                }
+
+                if (empty($valid_indexes)) {
+                    return back()->with('error', 'Aucun plat sélectionné.');
+                }
+
+                $order_data = [];
+
+                foreach ($valid_indexes as $idx) {
+                    $food = Food::find($food_ids[$idx]);
+                    if (!$food) continue;
+
+                    $order = new Order();
+                    $order->name = $request->name;
+                    $order->email = $request->email;
+                    $order->phone = $request->phone;
+                    $order->adress = $request->adress;
+                    $order->title = $titles[$idx];
+                    $order->quantity = (int) ($quantities[$idx] ?? 1);
+                    $order->price = $prices[$idx];
+                    $order->food_id = $food->id;
+
+                    // ✅ Corrige ici : statut propre sans retour à la ligne
+                    $order->delivery_status = 'In Progress';
+
+                    // Gestion stock insuffisant
+                    $order->stock_insuffisant = $food->stock < $order->quantity;
+
+                    $order->save();
+
+                    // Mettre à jour le stock
+                    $food->stock -= $order->quantity;
+                    $food->save();
+
+                    $order_data[] = [
+                        'title' => $titles[$idx],
+                        'quantity' => $quantities[$idx],
+                        'price' => $prices[$idx],
+                    ];
+                }
+
+                // Vider le panier
+                Cart::where('userid', $user_id)->delete();
+
+                // Générer le PDF
+                $pdf = Pdf::loadView('pdfs.commande', [
+                    'name' => $request->name,
+                    'email' => $request->email,
+                    'phone' => $request->phone,
+                    'adress' => $request->adress,
+                    'orders' => $order_data
+                ]);
+
+                // Sauvegarder le fichier dans le dossier public
+                $filename = 'commande_' . Str::random(10) . '.pdf';
+                Storage::disk('public')->put($filename, $pdf->output());
+
+                return redirect('/home')->with([
+                    'commande_success' => 'Votre commande a été confirmée avec succès !',
+                    'pdf_url' => asset('storage/' . $filename)
+                ]);
             }
-        }
 
-        if (empty($valid_indexes)) {
-            return back()->with('error', 'Aucun plat sélectionné.');
-        }
-
-        // Enregistrer chaque commande
-        foreach ($valid_indexes as $idx) {
-            $food = Food::find($food_ids[$idx]);
-            if (!$food) continue;
-
-            $order = new Order();
-            $order->name = $request->name;
-            $order->email = $request->email;
-            $order->phone = $request->phone;
-            $order->adress = $request->adress;
-            $order->title = $titles[$idx];
-            $order->quantity = (int) ($quantities[$idx] ?? 1);
-            $order->price = $prices[$idx];
-            $order->food_id = $food->id;
-            $order->stock_insuffisant = $food->stock < $order->quantity;
-            $order->save();
-
-            // Mise à jour stock
-            $food->stock -= $order->quantity;
-            $food->save();
-        }
-
-        // Vider le panier de l'utilisateur
-        Cart::where('userid', $user_id)->delete();
-
-        return redirect('/')->with('success', 'Votre commande a été confirmée avec succès !');
-    }
 
 
     // Mise à jour de la quantité dans le panier

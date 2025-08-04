@@ -83,13 +83,20 @@ class ServeurController extends Controller
         {
             $table = Table::findOrFail($id);
 
+            // Empêcher la libération de la table "Commande externe"
+            if ($table->nom_table === 'Commande externe') {
+                return back()->with('error', 'Cette table ne peut pas être libérée manuellement.');
+            }
+
             if ($table->serveur_id == Auth::id()) {
                 $table->serveur_id = null;
+                $table->statut = 'Disponible'; // Facultatif, selon ton flux
                 $table->save();
             }
 
             return back()->with('success', 'Table libérée. En attente de nouvelle affectation.');
         }
+
 
 
         public function dashboard()
@@ -103,33 +110,56 @@ class ServeurController extends Controller
         }
 
 
+        public function mesTables()
+        {
+            $serveurId = Auth::id();
 
-            public function mesTables()
-            {
-                $serveurId = Auth::id();
+            // Récupérer les tables assignées au serveur avec leurs réservations et commandes (orders)
+            $tables = Table::with([
+                'reservation' => function ($q) {
+                    $q->latest();
+                },
+                'orders' => function ($q) {
+                    $q->with('food')->orderBy('created_at', 'desc');
+                }
+            ])
+            ->where('serveur_id', $serveurId)
+            ->get();
 
-                $tables = Table::with([
-                    'reservation' => function ($q) {
-                        $q->latest();
-                    },
-                    'commandes.food'
-                ])
-                ->where('serveur_id', $serveurId)
-                ->get();
+            // Récupérer la table "Commande externe" avec ses commandes
+            $tableExterne = Table::with(['orders.food'])
+                ->where('nom_table', 'Commande externe')
+                ->first();
 
-                return view('serveur.mesTables', compact('tables'));
+            // L'ajouter à la collection $tables si elle existe et n’est pas déjà dedans
+            if ($tableExterne && !$tables->contains('id', $tableExterne->id)) {
+                $tables->push($tableExterne);
             }
 
+            return view('serveur.mesTables', compact('tables'));
+        }
 
 
         public function nouvelleCommande()
         {
             $serveurId = Auth::id();
-            $tables = Table::where('serveur_id', $serveurId)->get();
+            $tablesServeur = Table::where('serveur_id', $serveurId)->get();
+
+            // Récupérer la table "Commande externe" qui peut ne pas avoir de serveur assigné
+            $tableExterne = Table::where('nom_table', 'Commande externe')->first();
+
+            if ($tableExterne && !$tablesServeur->contains($tableExterne)) {
+                $tablesServeur->prepend($tableExterne);
+            }
+
             $foods = Food::all();
 
-            return view('serveur.nouvelle_commande', compact('tables', 'foods'));
+            return view('serveur.nouvelle_commande', [
+                'tables' => $tablesServeur,
+                'foods' => $foods,
+            ]);
         }
+
 
         public function createOrder()
         {
@@ -374,25 +404,36 @@ class ServeurController extends Controller
                 return redirect()->back()->with('success', 'Commande prise en charge par le serveur.');
             }
 
-           
-          public function commandesEnLigneDisponibles()
+            public function commandesEnLigneDisponibles()
             {
-                // Commandes en ligne en cours
+                // Récupérer les commandes non encore prises en charge (en cours)
                 $commandes = Order::where('delivery_status', 'In Progress')
-                    ->orderBy('created_at', 'desc')
                     ->get()
-                    ->groupBy('email'); // groupe par client
+                    ->groupBy('email');
 
-                $tablesDisponibles = Table::where('statut', 'disponible')->get();
+                // Inclure toutes les tables disponibles, y compris "Commande externe"
+                $tablesDisponibles = Table::where('statut', 'Disponible')->get();
 
                 return view('serveur.commandes_en_ligne', compact('commandes', 'tablesDisponibles'));
             }
 
-           public function prendreCommandesClient(Request $request)
+           
+            public function prendreCommandesClient(Request $request)
             {
                 $orderIds = $request->input('order_ids', []);
                 $serveurId = $request->input('serveur_id');
                 $tableId = $request->input('table_id');
+
+                // Si aucune table n'a été choisie, utiliser la table "Commande externe"
+                if (!$tableId) {
+                    $tableExterne = Table::where('nom_table', 'Commande externe')->first();
+
+                    if (!$tableExterne) {
+                        return redirect()->back()->with('error', 'La table "Commande externe" est introuvable.');
+                    }
+
+                    $tableId = $tableExterne->id;
+                }
 
                 foreach ($orderIds as $orderId) {
                     $order = Order::find($orderId);
@@ -409,14 +450,15 @@ class ServeurController extends Controller
                         'quantite' => $order->quantity,
                         'statut' => 'en_attente',
                         'commande_en_ligne_id' => $order->id,
-                        'payment_status' => 'non_payé',  // Ajout du statut paiement
+                        'payment_status' => 'non_payé',
                     ]);
 
-                    $order->update(['delivery_status' => 'Taken']);
+                    $order->update(['delivery_status' => 'Delivered']);
                 }
 
+                // Marquer la table comme occupée sauf si c'est la table "Commande externe"
                 $table = Table::find($tableId);
-                if ($table) {
+                if ($table && $table->nom_table !== 'Commande externe') {
                     $table->update([
                         'serveur_id' => $serveurId,
                         'statut' => 'occupée',
@@ -424,7 +466,10 @@ class ServeurController extends Controller
                 }
 
                 return redirect()->back()->with('success', 'Commandes prises en charge avec succès.');
-            }
+        }
+
+
+        
 
             public function payerCommandesGroupes(Table $table)
             {
@@ -440,6 +485,8 @@ class ServeurController extends Controller
                 return redirect()->back()->with('success', 'Paiement des commandes effectué. Table libérée.');
             }
 
+
+            
             
              public function board()
             {

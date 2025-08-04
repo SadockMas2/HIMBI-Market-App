@@ -19,6 +19,11 @@ class Table extends Model
                 return $this->hasMany(ServerOrder::class, 'table_id');
             }
             
+            public function orders()
+            {
+                return $this->hasMany(Order::class);
+            }
+
             public function serveur()
             {
                 return $this->belongsTo(User::class, 'serveur_id');

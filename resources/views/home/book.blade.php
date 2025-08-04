@@ -71,10 +71,13 @@
                 </div>
             @endif
 
-            <div class="col-md-4">
-                <label class="form-label">Téléphone</label>
-                <input type="text" class="form-control" name="phone" placeholder="Téléphone" required>
-            </div>
+            @if(Auth::check())
+                <div class="col-md-4">
+                    <label class="form-label">Téléphone</label>
+                    <input type="text" class="form-control" value="{{ Auth::user()->phone }}" disabled>
+                    <input type="hidden" name="phone" value="{{ Auth::user()->phone }}">
+                </div>
+            @endif
 
             <div class="col-md-4">
                 <label class="form-label">Nombre d'invités</label>
@@ -91,17 +94,20 @@
                 <input type="date" class="form-control" name="date" required>
             </div>
 
-            <div class="col-md-4">
-                <label class="form-label">Table</label>
-                <select name="table_id" class="form-select" required>
-                    <option value="">-- Choisir une table --</option>
-                    @foreach($tables as $table)
-                        <option value="{{ $table->id }}">
-                            Table {{ $table->nom_table }} ({{ $table->capacite }} pers.)
-                        </option>
-                    @endforeach
-                </select>
-            </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Table</label>
+                            <select name="table_id" class="form-select" required>
+                                <option value="">-- Choisir une table --</option>
+                                @foreach($tables as $table)
+                                    @if($table->nom_table !== 'Commande externe')
+                                        <option value="{{ $table->id }}">
+                                            Table {{ $table->nom_table }} ({{ $table->capacite }} pers.)
+                                        </option>
+                                    @endif
+                                @endforeach
+                            </select>
+                        </div>
+
 
             <div class="col-md-12 text-center mt-3">
                 <button type="submit" class="btn btn-warning btn-lg px-5">Réserver</button>

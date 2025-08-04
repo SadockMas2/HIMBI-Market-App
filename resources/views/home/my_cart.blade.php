@@ -125,6 +125,7 @@
         <a href="{{ url('/home') }}" class="btn-confirm">⬅️ Retour à l'accueil</a>
     </div>
 
+   
     @if(session('success'))
         <div class="alert alert-success text-center">{{ session('success') }}</div>
     @endif

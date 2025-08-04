@@ -107,11 +107,25 @@
         <div class="mb-4">
             <label for="table_id" class="form-label">Table</label>
             <select name="table_id" id="table_id" class="form-select" required>
-                <option value="">-- Choisir une table --</option>
-                @foreach($tables as $table)
-                    <option value="{{ $table->id }}">{{ $table->nom_table }}</option>
-                @endforeach
-            </select>
+              <option value="">-- Choisir une table --</option>
+
+              {{-- Afficher la table "Commande externe" en premier --}}
+              @php
+                  $tableExterne = $tables->firstWhere('nom_table', 'Commande externe');
+              @endphp
+
+              @if($tableExterne)
+                  <option value="{{ $tableExterne->id }}" style="font-weight: bold; color: #e67e22;">
+                      {{ $tableExterne->nom_table }} (Externe)
+                  </option>
+              @endif
+
+              {{-- Afficher les autres tables (hors "Commande externe") --}}
+              @foreach($tables->where('nom_table', '!=', 'Commande externe') as $table)
+                  <option value="{{ $table->id }}">{{ $table->nom_table }}</option>
+              @endforeach
+          </select>
+
         </div>
 
         <div id="plats-container">

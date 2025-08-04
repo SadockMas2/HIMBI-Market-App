@@ -108,56 +108,59 @@
                                 <td>{{ $table->nom_table }}</td>
                                 <td>{{ $table->capacite }} personnes</td>
                                 <td>
-                                    <form action="{{ url('/update_table_status', $table->id) }}" method="POST" style="display: inline-flex; align-items: center; gap: 10px;">
-                                        @csrf
-                                        @method('PUT')
-
-                                        <select name="statut" required>
-                                            <option value="Disponible" {{ strtolower($table->statut) == 'disponible' ? 'selected' : '' }}>Disponible</option>
-                                            <option value="Réservée" {{ strtolower($table->statut) == 'réservée' ? 'selected' : '' }}>Réservée</option>
-                                            <option value="Occupée" {{ strtolower($table->statut) == 'occupée' ? 'selected' : '' }}>Occupée</option>
-                                        </select>
-
-                                        <button type="submit">Modifier</button>
-                                    </form>
+                                    @if($table->nom_table !== 'Commande externe')
+                                        <form action="{{ url('/update_table_status', $table->id) }}" method="POST" style="display: inline-flex; align-items: center; gap: 10px;">
+                                            @csrf
+                                            @method('PUT')
+                                            <select name="statut" required>
+                                                <option value="Disponible" {{ strtolower($table->statut) == 'disponible' ? 'selected' : '' }}>Disponible</option>
+                                                <option value="Réservée" {{ strtolower($table->statut) == 'réservée' ? 'selected' : '' }}>Réservée</option>
+                                                <option value="Occupée" {{ strtolower($table->statut) == 'occupée' ? 'selected' : '' }}>Occupée</option>
+                                            </select>
+                                            <button type="submit">Modifier</button>
+                                        </form>
+                                    @else
+                                        <span style="color: #aaa;">Action désactivée</span>
+                                    @endif
                                 </td>
                                 <td>
+                                    {{-- Supprimer --}}
+                                    @if($table->nom_table !== 'Commande externe')
+                                        <form action="{{ url('/delete_table', $table->id) }}" method="POST" onsubmit="return confirm('Voulez-vous vraiment supprimer cette table ?');" style="display:inline;">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn-delete">Supprimer</button>
+                                        </form>
+                                    @endif
 
-                                    
-                                    <form action="{{ url('/delete_table', $table->id) }}" method="POST" onsubmit="return confirm('Voulez-vous vraiment supprimer cette table ?');" style="display:inline;">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn-delete">Supprimer</button>
-                                    </form>
+                @if($table->nom_table == 'Commande externe')
+                    <p class="text-success">Table partagée entre tous les serveurs</p>
+                @else
+                    {{-- Assigner un serveur --}}
+                    <form action="{{ url('assign_serveur/'.$table->id) }}" method="POST" style="margin-top: 5px;">
+                        @csrf
+                        <select name="serveur_id" class="form-control">
+                            <option value="">-- Assigner un serveur --</option>
+                            @foreach($serveurs as $serveur)
+                                <option value="{{ $serveur->id }}" {{ $table->serveur_id == $serveur->id ? 'selected' : '' }}>
+                                    {{ $serveur->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                        <button class="btn btn-sm btn-primary mt-1">Assigner</button>
+                    </form>
+                @endif
 
-
-
-                                    <form action="{{ url('assign_serveur/'.$table->id) }}" method="POST">
-                                        @csrf
-                                        <select name="serveur_id" class="form-control">
-                                            <option value="">-- Assigner un serveur --</option>
-                                            @foreach($serveurs as $serveur)
-                                                <option value="{{ $serveur->id }}" {{ $table->serveur_id == $serveur->id ? 'selected' : '' }}>
-                                                    {{ $serveur->name }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                        <button class="btn btn-sm btn-primary mt-1">Assigner</button>
-                                    </form>
-
-                                        @if(in_array(strtolower($table->statut), ['réservée', 'occupée']))
-                                            <form action="{{ url('/liberer_table', $table->id) }}" method="POST" style="display:inline;">
-                                                @csrf
-                                                @method('PUT')
-                                                <button type="submit" class="btn" style="background-color: #27ae60; color: white; margin-left: 5px;">
-                                                    Libérer
-                                                </button>
-                                            </form>
-                                        @endif
-
-
-
-
+                                    {{-- Libérer --}}
+                                    @if(in_array(strtolower($table->statut), ['réservée', 'occupée']) && $table->nom_table !== 'Commande externe')
+                                        <form action="{{ url('/liberer_table', $table->id) }}" method="POST" style="display:inline;">
+                                            @csrf
+                                            @method('PUT')
+                                            <button type="submit" class="btn" style="background-color: #27ae60; color: white; margin-top: 5px;">
+                                                Libérer
+                                            </button>
+                                        </form>
+                                    @endif
                                 </td>
                             </tr>
                         @endforeach
