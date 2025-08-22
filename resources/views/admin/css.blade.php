@@ -22,3 +22,35 @@
     <!-- Tweaks for older IEs--><!--[if lt IE 9]>
         <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
         <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script><![endif]-->
+
+        
+<style>
+/* Fixer la navbar en haut */
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1030; /* au-dessus de tout */
+}
+
+/* Fixer la sidebar sur la gauche */
+#sidebar {
+    position: fixed;
+    top: 70px; /* hauteur de la navbar */
+    left: 0;
+    height: calc(100vh - 70px); /* hauteur totale moins la navbar */
+    width: 250px;
+    overflow-y: auto;
+    z-index: 1020;
+}
+
+/* Ajuster le contenu principal pour qu’il ne soit pas caché */
+.page-content {
+    margin-left: 250px; /* largeur de la sidebar */
+    padding-top: 80px; /* hauteur de la navbar */
+    padding-right: 20px;
+    padding-left: 20px;
+}
+</style>
+  

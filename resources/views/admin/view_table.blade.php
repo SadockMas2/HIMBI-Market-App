@@ -4,6 +4,40 @@
     @include('admin.css')
 
     <style>
+
+  /* Fixe le header en haut */
+header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 60px; /* ou ajuste selon la vraie hauteur */
+    z-index: 1000;
+    background-color: #fff; /* Ajoute une couleur de fond pour éviter la transparence */
+}
+
+/* Fixe la sidebar à gauche */
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 250px; /* Largeur de la sidebar */
+    height: 100%;
+    z-index: 999;
+    overflow-y: auto;
+    background-color: #2c3e50; /* Ajuste si nécessaire */
+    padding-top: 60px; /* Espace pour ne pas que le header cache le haut de la sidebar */
+}
+
+        /* Contenu décalé à droite et en dessous du header */
+        .page-content {
+            margin-top: 60px; /* Hauteur du header */
+            margin-left: 280px; /* Largeur de la sidebar */
+            padding: 20px;
+        }
+
+      
+
         table {
             border: 1px solid skyblue;
             margin: 30px auto;

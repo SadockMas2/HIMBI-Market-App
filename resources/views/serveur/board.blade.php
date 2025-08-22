@@ -1,91 +1,112 @@
-    @extends('serveur.index') {{-- Layout du serveur avec sidebar --}}
+@extends('serveur.index') {{-- Layout du serveur avec sidebar --}}
 
 @section('content')
 <style>
+    /* CONTENEUR PRINCIPAL */
     .dashboard-wrapper {
         background: url('/images_sections/serveur.jpg') no-repeat center center;
         background-size: cover;
         position: relative;
         min-height: 100vh;
-        padding: 60px 20px;
+        padding: 80px 20px 40px;
     }
 
+    /* OVERLAY SOMBRE */
     .dashboard-overlay {
-        background-color: rgba(0, 0, 0, 0.7);
-        padding: 40px;
-        border-radius: 12px;
+        background: rgba(15, 15, 20, 0.85);
+        padding: 50px 30px;
+        border-radius: 16px;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.6);
     }
 
+    /* TITRE */
+    .dashboard-overlay h2 {
+        font-weight: 700;
+        font-size: 2rem;
+        color: #f8f9fa;
+    }
+
+    /* CARDS */
     .card-custom {
-        background-color: #1f1f1f;
+        background: linear-gradient(135deg, #1e293b, #0f172a);
         border: none;
-        color: #ffc107;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-        border-left: 6px solid #ffc107;
-        transition: 0.3s ease-in-out;
+        color: #f8f9fa;
+        border-radius: 14px;
+        padding: 25px 20px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
 
     .card-custom:hover {
-        transform: scale(1.02);
-        border-left-color: #ff214f;
+        transform: translateY(-6px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.4);
     }
 
-    .card-custom .card-body {
-        padding: 25px;
+    /* ICONES */
+    .card-custom i {
+        font-size: 40px;
+        margin-bottom: 15px;
+        color: #ffc107;
     }
 
+    /* TITRES */
     .card-custom h5 {
         font-weight: 700;
+        margin-bottom: 6px;
+        font-size: 1.25rem;
     }
 
-    .card-custom i {
-        font-size: 30px;
-        margin-bottom: 10px;
+    /* TEXTE */
+    .card-custom small {
+        color: #adb5bd;
+        font-size: 0.9rem;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+        .dashboard-overlay {
+            padding: 30px 20px;
+        }
+        .dashboard-overlay h2 {
+            font-size: 1.5rem;
+        }
     }
 </style>
 
 <div class="dashboard-wrapper">
-    <div class="dashboard-overlay text-white container">
-        <h2 class="mb-5 text-center">👋 Bienvenue, {{ Auth::user()->name }} !</h2>
+    <div class="dashboard-overlay container text-center">
+        <h2 class="mb-5">👋 Bienvenue, <span class="text-warning">{{ Auth::user()->name }}</span></h2>
 
         <div class="row g-4">
             <div class="col-md-6 col-lg-3">
-                <div class="card card-custom text-center">
-                    <div class="card-body">
-                        <i class="fa fa-receipt"></i>
-                        <h5>{{ $commandesJour }} Commandes du jour</h5>
-                        <small>Reçues aujourd'hui</small>
-                    </div>
+                <div class="card card-custom">
+                    <i class="fa fa-receipt"></i>
+                    <h5>{{ $commandesJour }} Commandes</h5>
+                    <small>Aujourd'hui</small>
                 </div>
             </div>
 
             <div class="col-md-6 col-lg-3">
-                <div class="card card-custom text-center">
-                    <div class="card-body">
-                        <i class="fa fa-chair"></i>
-                        <h5>{{ $tablesServies }} Tables servies</h5>
-                        <small>Actuellement occupées</small>
-                    </div>
+                <div class="card card-custom">
+                    <i class="fa fa-chair"></i>
+                    <h5>{{ $tablesServies }} Tables</h5>
+                    <small>Servies</small>
                 </div>
             </div>
 
             <div class="col-md-6 col-lg-3">
-                <div class="card card-custom text-center">
-                    <div class="card-body">
-                        <i class="fa fa-calendar-check"></i>
-                        <h5>{{ $reservationsActives }} Réservations</h5>
-                        <small>En cours</small>
-                    </div>
+                <div class="card card-custom">
+                    <i class="fa fa-calendar-check"></i>
+                    <h5>{{ $reservationsActives }} Réservations</h5>
+                    <small>En cours</small>
                 </div>
             </div>
 
             <div class="col-md-6 col-lg-3">
-                <div class="card card-custom text-center">
-                    <div class="card-body">
-                        <i class="fa fa-utensils"></i>
-                        <h5>{{ $platsServis }} Plats servis</h5>
-                        <small>Total aujourd'hui</small>
-                    </div>
+                <div class="card card-custom">
+                    <i class="fa fa-utensils"></i>
+                    <h5>{{ $platsServis }} Plats</h5>
+                    <small>Servis aujourd'hui</small>
                 </div>
             </div>
         </div>

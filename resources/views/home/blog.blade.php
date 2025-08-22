@@ -98,6 +98,7 @@
 
     /* Bouton panier */
     .btn-panier {
+        margin-right: 00px;
         background-color: #28a745;
         border: none;
         padding: 12px 40px;
@@ -109,6 +110,7 @@
     }
 
     .btn-panier:hover {
+
         background-color: #218838;
         box-shadow: 0 8px 20px rgba(40,167,69,0.5);
     }
@@ -120,17 +122,22 @@
 </style>
 
 <!-- SECTION PLATS -->
+<!-- SECTION PLATS -->
 <div id="blog" class="container-fluid text-light text-center">
     <div class="text-light-position">
-        <h2 class="section-title mb-5">NOS PLATS</h2>
-
-       
-        @if(session('error'))
-            <div class="alert alert-danger text-center">{{ session('error') }}</div>
-        @endif
 
         <form action="{{ url('add_cart_multiple') }}" method="POST">
             @csrf
+
+            <!-- Titre + bouton sur la même ligne -->
+            <div class="d-flex justify-content-between align-items-center mb-5">
+                <h2 class="section-title m-0">NOS PLATS</h2>
+                <button type="submit" class="btn btn-panier">✅ Ajouter au Panier</button>
+            </div>
+
+            @if(session('error'))
+                <div class="alert alert-danger text-center">{{ session('error') }}</div>
+            @endif
 
             <div class="row">
                 <!-- NOURRITURES -->
@@ -184,10 +191,6 @@
                         @endforeach
                     </div>
                 </div>
-            </div>
-
-            <div class="text-center mt-4">
-                <button type="submit" class="btn btn-panier">✅ Ajouter au Panier</button>
             </div>
         </form>
     </div>

@@ -89,6 +89,8 @@
 
 @section('content')
 
+
+
 <h2 style="color: white; margin-bottom: 30px;">Liste des commandes groupées par client</h2>
 
 @if(session('success'))

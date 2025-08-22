@@ -2,13 +2,32 @@
 
 @section('content')
 <style>
-    .content-wrapper {
-        margin-left: 250px;
-        padding: 20px;
-        min-height: 100vh;
-        background-color: #1e1e2f;
-        color: #f0f0f0;
+ .content-wrapper {
+    margin-left: 100px; /* largeur de la sidebar */
+    margin-right: 100px;
+    margin-top: 20px; /* hauteur du header */
+    padding: 20px;
+    min-height: calc(100vh - 60px);
+    background-color: #1e1e2f;
+    display: flex;
+    justify-content: center; /* centre horizontalement */
+    align-items: start;      /* top */
     }
+
+    .content-inner {
+        width: 100%;
+        max-width: 900px; /* limite la largeur pour que ce soit centré */
+    }
+
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .content-wrapper {
+            margin-left: 0;
+            padding: 15px;
+        }
+    }
+
 
     @media (max-width: 768px) {
         .content-wrapper {
@@ -30,12 +49,12 @@
     }
 
     .table {
-        background-color: #2c2c3c;
+        background-color: #2c2c34;
         color: #fff;
     }
 
     .table th {
-        background-color: #00d9ff;
+        background-color: #6e8386;
         color: #000;
         text-align: center;
     }

@@ -6,14 +6,15 @@
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin: 0;
     padding: 0;
-    color: #eee;
+    color: #623939;
   }
 
   .page-content {
     max-width: 1000px;
-    margin: 40px auto 40px 270px; /* Décalage pour le sidebar */
+    margin-left: 50px;
+    /* margin: 40px auto 40px 270px; Décalage pour le sidebar */
     padding: 25px 20px;
-    background: #393838;
+    background: #1c1b1b;
     border-radius: 12px;
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
   }
@@ -21,7 +22,7 @@
   h2 {
     font-weight: 700;
     margin-bottom: 25px;
-    color: #d1d7dc;
+    color: #d4dee6;
     text-align: center;
     font-size: 26px;
   }
@@ -46,7 +47,7 @@
   tbody td {
     padding: 8px 10px;
     text-align: center;
-    color: #fff;
+    color: #5b3737;
     border-bottom: 1px solid #444;
   }
 

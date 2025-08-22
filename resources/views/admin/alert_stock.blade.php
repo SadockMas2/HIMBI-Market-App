@@ -11,12 +11,13 @@
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       margin: 0;
       padding: 0;
-      color: #333;
+      color: rgb(57, 56, 56); 
     }
 
     .page-content {
       max-width: 900px;
       margin: 40px auto;
+      margin-left: 450px;
       padding: 30px 20px;
       background: rgb(57, 56, 56);
       border-radius: 12px;

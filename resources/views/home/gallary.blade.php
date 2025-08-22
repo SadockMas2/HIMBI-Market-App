@@ -114,66 +114,66 @@
     <h2 class="section-title">NOS MENUS</h2>
     <div class="gallary">
         <div class="gallary-item wow fadeIn">
-            <img src="assets/imgs/gallary-1.jpg" alt="Menu 1" class="gallary-img" />
+            <img src="food_img/1.jpg" alt="Menu 1" class="gallary-img" />
             <a href="#" class="gallary-overlay">
                 <i class="gallary-icon ti-plus"></i>
             </a>
         </div>
         <div class="gallary-item wow fadeIn">
-            <img src="assets/imgs/gallary-2.jpg" alt="Menu 2" class="gallary-img" />
+            <img src="food_img/3.webp" alt="Menu 2" class="gallary-img" />
             <a href="#" class="gallary-overlay">
                 <i class="gallary-icon ti-plus"></i>
             </a>
         </div>
         <div class="gallary-item wow fadeIn">
-            <img src="assets/imgs/gallary-3.jpg" alt="Menu 3" class="gallary-img" />
+            <img src="food_img/4.webp" alt="Menu 3" class="gallary-img" />
             <a href="#" class="gallary-overlay">
                 <i class="gallary-icon ti-plus"></i>
             </a>
         </div>
         <div class="gallary-item wow fadeIn">
-            <img src="assets/imgs/gallary-4.jpg" alt="Menu 4" class="gallary-img" />
+            <img src="food_img/5.webp" alt="Menu 4" class="gallary-img" />
             <a href="#" class="gallary-overlay">
                 <i class="gallary-icon ti-plus"></i>
             </a>
         </div>
         <div class="gallary-item wow fadeIn">
-            <img src="assets/imgs/gallary-5.jpg" alt="Menu 5" class="gallary-img" />
+            <img src="food_img/6.webp" alt="Menu 5" class="gallary-img" />
             <a href="#" class="gallary-overlay">
                 <i class="gallary-icon ti-plus"></i>
             </a>
         </div>
         <div class="gallary-item wow fadeIn">
-            <img src="assets/imgs/gallary-6.jpg" alt="Menu 6" class="gallary-img" />
+            <img src="food_img/19.jpg" alt="Menu 6" class="gallary-img" />
             <a href="#" class="gallary-overlay">
                 <i class="gallary-icon ti-plus"></i>
             </a>
         </div>
         <div class="gallary-item wow fadeIn">
-            <img src="assets/imgs/gallary-7.jpg" alt="Menu 7" class="gallary-img" />
+            <img src="food_img/10.webp" alt="Menu 7" class="gallary-img" />
             <a href="#" class="gallary-overlay">
                 <i class="gallary-icon ti-plus"></i>
             </a>
         </div>
         <div class="gallary-item wow fadeIn">
-            <img src="assets/imgs/gallary-8.jpg" alt="Menu 8" class="gallary-img" />
+            <img src="food_img/28.jpg" alt="Menu 8" class="gallary-img" />
             <a href="#" class="gallary-overlay">
                 <i class="gallary-icon ti-plus"></i>
             </a>
         </div>
         <div class="gallary-item wow fadeIn">
-            <img src="assets/imgs/gallary-9.jpg" alt="Menu 9" class="gallary-img" />
+            <img src="food_img/23.jpg" class="gallary-img" />
             <a href="#" class="gallary-overlay">
                 <i class="gallary-icon ti-plus"></i>
             </a>
         </div>
         <div class="gallary-item wow fadeIn">
-            <img src="assets/imgs/gallary-10.jpg" alt="Menu 10" class="gallary-img" />
+            <img src="food_img/32.jpeg" alt="Menu 10" class="gallary-img" />
             <a href="#" class="gallary-overlay">
                 <i class="gallary-icon ti-plus"></i>
             </a>
         </div>
-        <div class="gallary-item wow fadeIn">
+        {{-- <div class="gallary-item wow fadeIn">
             <img src="assets/imgs/gallary-11.jpg" alt="Menu 11" class="gallary-img" />
             <a href="#" class="gallary-overlay">
                 <i class="gallary-icon ti-plus"></i>
@@ -184,6 +184,6 @@
             <a href="#" class="gallary-overlay">
                 <i class="gallary-icon ti-plus"></i>
             </a>
-        </div>
+        </div> --}}
     </div>
 </div>

@@ -16,11 +16,12 @@ class Order extends Model
         'price', 'quantity', 'image', 'delivery_status',
         'food_id', 'stock_insuffisant',
     ];
-
+    
     public function food()
     {
-        return $this->belongsTo(Food::class);
+        return $this->belongsTo(Food::class, 'food_id');
     }
+
 
     public function setDeliveryStatusAttribute($value)
     {

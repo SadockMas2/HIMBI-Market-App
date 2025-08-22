@@ -56,6 +56,7 @@
                 <th>Détails</th>
                 <th>Prix</th>
                 <th>Image</th>
+                {{-- <th>Ingrédients</th> --}}
                 <th>Supprimer</th>
                 <th>Modifier</th>
               </tr>
@@ -71,6 +72,13 @@
                   <td>
                     <img width="100" src="{{ asset('food_img/'.$item->image) }}" alt="{{ $item->title }}">
                   </td>
+{{-- 
+                   <td>
+                    <a class="btn btn-sm btn-primary"
+                      href="{{ route('food.ingredients.create', $item->id) }}">
+                      Affecter ingrédients
+                    </a>
+                  </td> --}}
                   <td>
                     <a class="btn btn-danger btn-sm" 
                        onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce plat ?')"

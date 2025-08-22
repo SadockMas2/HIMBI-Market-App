@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <br>
   <title>Réservations</title>
 
   
@@ -20,6 +21,7 @@
     .page-content {
       max-width: 1100px;
       margin: 40px auto;
+      margin-left: 350px;
       padding: 30px 40px;
       background: rgb(51, 29, 29);
       border-radius: 12px;

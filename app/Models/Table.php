@@ -21,10 +21,10 @@ class Table extends Model
             
             public function orders()
             {
-                return $this->hasMany(Order::class);
+                return $this->hasMany(Order::class, 'table_id');
             }
 
-            public function serveur()
+            public function serveur()    
             {
                 return $this->belongsTo(User::class, 'serveur_id');
             }

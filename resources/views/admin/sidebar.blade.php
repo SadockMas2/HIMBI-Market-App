@@ -25,8 +25,10 @@
                 </a>
                 <ul id="dropdownUtilisateurs" class="collapse list-unstyled">
                   <li><a href="{{ url('show_user') }}">Utilisateurs enregistrés</a></li>
+                  <li><a href="{{ url('add_user') }}">Nouveau client</a></li>
                   <li><a href="{{ url('add_serveur') }}">Ajouter un serveur</a></li>
                   <li><a href="{{ url('view_serveur') }}">Voir les serveurs</a></li>
+                  <li><a href="{{ url('view_user') }}">Voir les clients</a></li>
                 </ul>
             </li>
 
@@ -45,6 +47,18 @@
               </li>
 
               <li>
+                <a href="#dropdownIngredients" aria-expanded="false" data-toggle="collapse">
+                  <i class="fa fa-leaf"></i> Ingrédients
+                </a>
+                <ul id="dropdownIngredients" class="collapse list-unstyled">
+                  <li><a href="{{ url('create') }}">Ajouter un ingrédient</a></li>
+                  <li><a href="{{ url('ingredients') }}">Voir les ingrédients</a></li>
+                  {{-- <li><a href="{{ url('ingredients_assign') }}">Associer aux plats</a></li> --}}
+                </ul>
+              </li>
+
+
+              <li>
                 <a href="#dropdownTables" aria-expanded="false" data-toggle="collapse">
                  <i class="fa fa-chair"></i> Tables
                 </a>
@@ -54,7 +68,7 @@
                 </ul>
               </li>
 
-
+           
               
 
              @php
@@ -67,6 +81,12 @@
               </a>
               <ul id="dropdownStock" class="collapse list-unstyled">
                 <li><a href="{{ url('show_stock') }}">Tous le stock</a></li>
+              <li class="nav-item">
+                  <a class="nav-link" href="{{ route('admin.stock_history') }}">
+                      Entrées-Sorties
+                  </a>
+              </li>
+
                 <li>
                   <a href="{{ url('alert_stock') }}">
                     Alertes
@@ -76,6 +96,14 @@
                   </a>
                 </li>
               </ul>
+            </li>
+
+            
+
+            <li>
+                <a href="{{ url('kitchen') }}">
+                    <i class="fa fa-fire"></i> Cuisine
+                </a>
             </li>
 
                 
@@ -95,7 +123,7 @@
 
                 
                
-
+              
                 
                 <li>
                     <a href="{{ url('historique') }}">

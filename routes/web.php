@@ -5,6 +5,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ServeurController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\FoodIngredientController;
 
 use Illuminate\Support\Facades\Auth;
 
@@ -56,10 +57,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/view_food', [AdminController::class, 'view_food']);
     Route::get('/delete_food/{id}', [AdminController::class, 'delete_food']);
     Route::get('/update_food/{id}', [AdminController::class, 'update_food']);
+    Route::post('/update_food_post/{id}', [AdminController::class, 'update_food_post'])->name('update_food_post');
     Route::post('/edit_food/{id}', [AdminController::class, 'edit_food']);
     Route::get('/view_table', [AdminController::class, 'view_table']);
     Route::get('/add_table', [AdminController::class, 'showAddTableForm']);
     Route::post('/add_table', [AdminController::class, 'add_table']);
+    Route::delete('delete_table/{id}', [AdminController::class, 'delete_table']);
+
     Route::put('/update_table_status/{id}', [AdminController::class, 'update_table_status']);
     Route::get('/orders', [AdminController::class, 'orders']);
     Route::get('/deliver_all/{email}', [AdminController::class, 'deliverAll'])->name('deliver_all');
@@ -70,9 +74,13 @@ Route::middleware('auth')->group(function () {
     Route::get('canceled/{id}', [AdminController::class, 'canceled']);
     Route::get('reservations', [AdminController::class, 'reservations']);
     Route::get('/view_serveur', [AdminController::class, 'view_serveur']);
+    Route::get('/view_user', [AdminController::class, 'view_user']);
     Route::get('/add_serveur', [AdminController::class, 'add_serveur']);
+    Route::get('/add_user', [AdminController::class, 'add_user']);
+    Route::post('/add_user', [AdminController::class, 'store_user']);
     Route::post('/add_serveur', [AdminController::class, 'store_serveur']);
     Route::delete('destroy_serveur/{id}', [AdminController::class, 'destroy_serveur']);
+    Route::delete('destroy_user/{id}', [AdminController::class, 'destroy_user']); //Supprimer un client
 
     Route::get('admin/commandes-en-cours', [AdminController::class, 'commandesEnCours'])->name('admin.commandes_en_cours');
     Route::put('admin/commande/{id}/update-status', [AdminController::class, 'updateCommandeStatus'])->name('admin.commande.update_status');
@@ -92,7 +100,42 @@ Route::middleware('auth')->group(function () {
     Route::get('/recu/{id}', [AdminController::class, 'recu'])->name('admin.recu');
     Route::get('/historique', [AdminController::class, 'historique'])->name('admin.historique');
     Route::get('/historique/pdf', [AdminController::class, 'exportHistoriquePDF'])->name('admin.historique.pdf');
-});
+    Route::post('/kitchen/prepare/{id}', [AdminController::class, 'prepareDish'])->name('prepareDish');
+    Route::post('/update-drink-stock/{id}', [AdminController::class, 'updateDrinkStock'])->name('updateDrinkStock');
+    Route::get('/kitchen', [AdminController::class, 'kitchen'])->name('kitchen');
+    Route::post('/food/{id}/ingredients', [AdminController::class, 'storeIngredients'])->name('food.ingredients.store');
+    Route::get('/create', [AdminController::class, 'create'])->name('admin.create');
+    Route::post('/store', [AdminController::class, 'store'])->name('admin.store');
+    Route::get('/foods/{id}/ingredients', [AdminController::class, 'editFoodIngredients'])->name('admin.view_all_ingredients');
+    Route::put('/foods/{id}/ingredients', [AdminController::class, 'updateIngredients'])->name('admin.ingredients.update');
+    
+    Route::get('/foods/{id}/edit-ingredients', [AdminController::class, 'showIngredientsForFood'])->name('admin.foods.edit_ingredients');
+    Route::get('/ingredients', [AdminController::class, 'indexIngredients'])->name('admin.ingredients.index');
+    Route::get('/ingredients/edit/{id}', [AdminController::class, 'editIngredients'])->name('admin.ingredients.edit');
+    Route::put('/ingredients/update/{id}', [AdminController::class, 'updateIngredient'])->name('admin.ingredients.update_single');
+    Route::get('/ingredients/delete/{id}', [AdminController::class, 'deleteIngredient'])->name('admin.ingredients.delete');
+
+   
+
+
+    Route::get('/stock-history', [AdminController::class, 'showStockHistory'])
+    ->name('admin.stock_history');
+
+    Route::get('/stock-history/pdf', [AdminController::class, 'exportStockHistoryPdf'])
+    ->name('admin.stock_history.pdf');
+
+
+    
+
+
+        // Formulaire d’affectation des ingrédients pour un plat
+    Route::get('/foods/{food}/ingredients', [FoodIngredientController::class, 'create'])
+        ->name('food.ingredients.create');
+
+    // Enregistrement des ingrédients (plusieurs à la fois)
+    Route::post('/foods/{food}/ingredients', [FoodIngredientController::class, 'store'])
+        ->name('food.ingredients.store');
+    });
 
 
 /*

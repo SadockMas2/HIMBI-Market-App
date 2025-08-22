@@ -6,7 +6,8 @@
 <style>
     .page-content {
         max-width: 900px;
-        margin: 40px auto 40px 270px;
+        margin-left: 150px;
+        /* margin: 40px auto 40px 270px; */
         padding: 30px 20px;
         background: #393838;
         border-radius: 12px;

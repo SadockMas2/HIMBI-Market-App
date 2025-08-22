@@ -1,247 +1,173 @@
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Stock des Plats</title>
+  <title>Cuisine - Préparer les Plats</title>
 
   @include('admin.css')
-  
 
   <style>
-    body {
-      background-color: #260814;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      margin: 0;
-      padding: 0;
-      color: #333;
+ 
+
+    body { 
+      background-color: #2c2f33;
+      color: #fff; 
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+      margin:0; padding:0; 
     }
-
-    .page-content {
-      max-width: 900px;
-      margin: 40px auto;
-      padding: 30px 20px;
-      background: rgb(57, 56, 56);
-      border-radius: 12px;
-      box-shadow: 0 6px 20px rgb(0 0 0 / 0.1);
+    .page-content { 
+      max-width: 1100px; 
+      margin-top: 60px; /* Hauteur du header */
+      margin-left: 340px; /* Largeur de la sidebar */
+      padding: 20px;
+      background:#2c2f33; 
+      border-radius:12px; 
+      box-shadow: 0 6px 20px rgba(0,0,0,0.4);
     }
-
-    
-
-    h2 {
-      font-weight: 700;
-      margin-bottom: 30px;
-      color: #d1d7dc;
-      text-align: center;
-      font-size: 30px;
+    h2 { 
+      text-align:center; 
+      margin-bottom:30px; 
+      color:#f1c40f; 
+      font-size:32px; 
+      font-weight:700;
     }
-
-    table {
-      width: 100%;
-      border-collapse: separate;
-      border-spacing: 0 12px;
-      font-size: 16px;
+    table { 
+      width:100%; 
+      border-collapse: collapse; 
+      table-layout: fixed;
     }
-
-    thead th {
-      background-color: #061b29;
-      color: rgb(70, 63, 204);
-      font-weight: 700;
-      padding: 15px;
-      border-radius: 10px 10px 0 0;
-      text-align: center;
-      user-select: none;
+    thead th { 
+      background:#061b29; 
+      color:#f1c40f; 
+      padding:12px; 
+      font-weight:700; 
+      border-radius:6px 6px 0 0;
     }
-
-    tbody tr {
-      background-color: #00080c;
-      color: white;
-      font-weight: 600;
-      transition: background-color 0.3s ease;
-      border-radius: 8px;
-      box-shadow: 0 2px 6px rgb(0 0 0 / 0.08);
+    tbody tr { 
+      background:#2c2f33; 
+      transition:0.3s; 
+      border-radius:6px; 
+      margin-bottom:5px; 
     }
-
-    tbody tr:hover {
-      background-color: #1c5980;
+    tbody tr:hover { 
+      background:#34495e; 
     }
-
-    tbody td {
-      padding: 12px 15px;
-      text-align: center;
-      border-radius: 0 0 8px 8px;
-      vertical-align: middle;
+    td { 
+      padding:12px; 
+      text-align:center; 
+      vertical-align: middle; 
+      word-wrap: break-word;
     }
-
-    form {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
+    .ingredient-list { 
+      text-align:left; 
+      margin:5px 0; 
+      font-size:14px; 
+      color:#ccc; 
+      max-height: 120px; 
+      overflow-y:auto;
     }
-
-    form input[type="number"] {
-      max-width: 100px;
-      padding: 6px 10px;
-      border-radius: 6px;
-      border: 1.8px solid #b0c4de;
-      font-size: 16px;
-      transition: border-color 0.3s ease;
+    .ingredient-list li { margin-bottom:4px; }
+    .ok { color:#2ecc71; font-weight:600; }
+    .not-ok { color:#e74c3c; font-weight:600; }
+    input[type="number"] { 
+      width:70px; 
+      padding:5px; 
+      border-radius:5px; 
+      border:1px solid #b0c4de; 
+      text-align:center; 
+      background:#1e1e2f; 
+      color:#fff;
     }
-
-    form input[type="number"]:focus {
-      border-color: #3498db;
-      outline: none;
-      box-shadow: 0 0 8px rgba(52, 152, 219, 0.3);
+    button { 
+      padding:6px 12px; 
+      border:none; 
+      border-radius:6px; 
+      background:#3498db; 
+      color:#fff; 
+      cursor:pointer; 
+      transition:0.3s;
     }
-
-    form button {
-      background-color: #3498db;
-      border: none;
-      color: white;
-      font-weight: 600;
-      padding: 8px 16px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 16px;
-      transition: background-color 0.3s ease;
+    button:hover { background:#2980b9; }
+    @media(max-width:768px){
+      table, thead, tbody, th, td, tr { display:block; width:100%; }
+      thead { display:none; }
+      tr { margin-bottom:15px; padding:10px; border-radius:10px; }
+      td { text-align:left; padding:10px; position:relative; }
+      td::before { content: attr(data-label); font-weight:bold; display:block; margin-bottom:4px; color:#f1c40f; }
+      .ingredient-list { max-height:100px; overflow-y:auto; }
     }
-
-    form button:hover {
-      background-color: #2868c7;
-    }
-
-    @media (max-width: 480px) {
-      .page-content {
-        padding: 20px 10px;
-      }
-
-      form {
-        flex-direction: column;
-        gap: 12px;
-      }
-
-      form input[type="number"] {
-        max-width: 100%;
-        width: 100%;
-      }
-
-      form button {
-        width: 100%;
-      }
-    }
-
-
-    @media (max-width: 768px) {
-  .page-content {
-    padding: 20px 10px;
-    margin: 20px 10px;
-  }
-
-  h2 {
-    font-size: 22px;
-  }
-
-  table,
-  thead,
-  tbody,
-  th,
-  td,
-  tr {
-    display: block;
-    width: 100%;
-  }
-
-  thead {
-    display: none; /* On cache l'en-tête sur petit écran */
-  }
-
-  tr {
-    margin-bottom: 15px;
-    background-color: #00080c;
-    border-radius: 10px;
-    padding: 10px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-  }
-
-  td {
-    text-align: left;
-    padding: 10px 8px;
-    position: relative;
-  }
-
-  td::before {
-    content: attr(data-label);
-    font-weight: bold;
-    display: block;
-    margin-bottom: 6px;
-    color: #8ac6f2;
-  }
-
-  form {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  form input[type="number"],
-  form button {
-    width: 100%;
-  }
-}
-
-
   </style>
 </head>
 <body>
 
-  @include('admin.header')
-  @include('admin.sidebar')
+@include('admin.header')
+@include('admin.sidebar')
 
-  <div class="page-content">
-    <h2>Stock des Plats</h2>
+<div class="page-content">
+  <h2>Kitchen - Préparer les Plats</h2>
 
-    @if(session('success'))
-      <div class="alert alert-success text-center">{{ session('success') }}</div>
-    @endif
+  @if(session('success'))
+    <div class="alert alert-success text-center">{{ session('success') }}</div>
+  @endif
+  @if(session('error'))
+    <div class="alert alert-danger text-center">{{ session('error') }}</div>
+  @endif
 
-    <table>
-      <thead>
-        <tr>
-          <th>Nom du plat</th>
-          <th>Quantité en stock</th>
-          <th>Action</th>
-        </tr>
-      </thead>
-      <tbody>
-        @foreach($food as $plat)
-          <tr>
-            <td data-label="Nom du plat">{{ $plat->title }}</td>
-            <td data-label="Quantité en stock">{{ $plat->stockRelation->quantity ?? $plat->stock }}</td>
-            <td data-label="Action">
+  <table>
+    <thead>
+      <tr>
+        <th>Plat</th>
+        <th>Quantité en Stock </th>
+        <th>Ingrédients requis</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      @foreach($foods as $plat)
+      <tr>
+        <td data-label="Plat">{{ $plat->title }}</td>
+        <td data-label="Stock préparé">{{ $plat->stock ?? 0 }}</td>
+      
+        <td data-label="Ingrédients requis" class="ingredient-list">
+          <ul>
+            @foreach($plat->ingredients as $ingredient)
+              @php
+                $unit = strtolower($ingredient->unit);
+                $required = $ingredient->pivot->quantity_required;
+                $stock = $ingredient->quantity_in_stock;
+                $suffisant = ($unit=='kg'||$unit=='l') ? ($stock*1000 >= $required) : ($stock >= $required);
+              @endphp
+              <li>
+                {{ $ingredient->name }} : {{ $stock }} {{ $ingredient->unit }} (Requis : {{ $required }} {{ $ingredient->pivot->unit }})
+                <span class="{{ $suffisant ? 'ok' : 'not-ok' }}">{{ $suffisant ? 'OK' : 'Stock insuffisant' }}</span>
+              </li>
+            @endforeach
+          </ul>
+        </td>
+        <td data-label="Action">
+          @if(strtolower($plat->detail) === 'boisson')
+            <!-- Boissons : juste mise à jour -->
+            <form action="{{ route('updateDrinkStock', $plat->id) }}" method="POST">
+              @csrf
+              <input type="number" name="stock" min="0" value="{{ $plat->stock ?? 0 }}" required>
+              <button type="submit">Mettre à jour</button>
+            </form>
+          @else
+            <!-- Plats classiques : préparer -->
+            <form action="{{ route('prepareDish', $plat->id) }}" method="POST">
+              @csrf
+              <input type="number" name="quantity" min="1" value="1" required>
+              <button type="submit">Préparer</button>
+            </form>
+          @endif
+        </td>
+      </tr>
+      @endforeach
+    </tbody>
+  </table>
+</div>
 
-              <form method="POST" action="{{ url('update_stock/'.$plat->id) }}">
-                @csrf
-                <input
-                  type="number"
-                  name="stock"
-                  min="0"
-                  value="{{ $plat->stockRelation->quantity ?? $plat->stock }}"
-                  required
-                  aria-label="Quantité en stock pour {{ $plat->title }}"
-                >
-                <button type="submit">Mettre à jour</button>
-              </form>
-            </td>
-          </tr>
-        @endforeach
-      </tbody>
-    </table>
-
-  </div>
-
-  @include('admin.js')
-
+@include('admin.js')
 </body>
 </html>

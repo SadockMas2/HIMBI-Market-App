@@ -50,7 +50,7 @@
             right: 0;
             z-index: 1030;
             background-color: #343a40;
-            color: #fff;
+            color:  rgb(50, 50, 50);;
             padding: 10px 20px;
         }
 
@@ -70,7 +70,7 @@
         }
 
         .navbar .navbar-header .navbar-brand {
-            color: white;
+            color: rgb(192, 169, 169);
             font-weight: bold;
         }
 

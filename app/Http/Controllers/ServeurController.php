@@ -361,16 +361,41 @@ class ServeurController extends Controller
                 return $pdf->download('facture_commandes_table_'.$table_id.'.pdf');
             }
 
+            
             public function recuCommandes($table_id)
             {
-                $commandes = ServerOrder::with('food')->where('table_id', $table_id)
-                                ->where('payment_status', 'payé')->get();
+                // Récupération des commandes payées de la table
+                $commandes = ServerOrder::with('food')
+                    ->where('table_id', $table_id)
+                    ->where('payment_status', 'payé')
+                    ->get();
 
                 $total = $commandes->sum(fn($cmd) => $cmd->quantite * $cmd->food->price);
 
+                // Génération du PDF
                 $pdf = PDF::loadView('pdfs.recu_commande', compact('commandes', 'total'));
+
+                // ✅ Mettre automatiquement le statut à "Delivered"
+                foreach ($commandes as $cmd) {
+                    $order = Order::find($cmd->order_id ?? null); // si tu as un lien avec la table orders
+                    if ($order) {
+                        $order->delivery_status = "Delivered";
+                        $order->save();
+                    }
+                }
+
+                // ✅ Optionnel : suppression des commandes payées après reçu
+                ServerOrder::where('table_id', $table_id)
+                    ->where('payment_status', 'payé')
+                    ->delete();
+
+                // ✅ Optionnel : libérer la table
+                Table::where('id', $table_id)->update(['statut' => 'Disponible']);
+
                 return $pdf->download('recu_commandes_table_'.$table_id.'.pdf');
             }
+
+
 
             public function payerCommandes($table_id)
             {
