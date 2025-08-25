@@ -15,7 +15,7 @@
     <ul class="list-unstyled px-2">
         <li>
             <a href="{{ route('serveur.board') }}" class="sidebar-link">
-                <i class="fa fa-chart-bar me-2"></i> Tableau de bord
+                <i class="fa fa-tachometer-alt me-2"></i> Tableau de bord
             </a>
         </li>
         <li>
@@ -35,7 +35,12 @@
         </li>
         <li>
             <a href="{{ url('showReservations') }}" class="sidebar-link">
-                <i class="fa fa-calendar-check me-2"></i> Réservations
+                <i class="fa fa-calendar-alt me-2"></i> Réservations
+            </a>
+        </li>
+        <li>
+            <a href="{{ route('profile.show') }}" class="sidebar-link">
+                <i class="fa fa-user-circle me-2"></i> Mon Profil
             </a>
         </li>
         <li>

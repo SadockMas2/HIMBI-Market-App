@@ -1,5 +1,3 @@
-{{-- Mes Tables Assignées --}}
-
 @extends('serveur.index')
 
 @section('content')
@@ -7,7 +5,6 @@
     .page-content {
         max-width: 900px;
         margin-left: 150px;
-        /* margin: 40px auto 40px 270px; */
         padding: 30px 20px;
         background: #393838;
         border-radius: 12px;
@@ -59,6 +56,12 @@
     .btn-sm {
         margin: 3px;
     }
+
+    ul {
+        list-style: none;
+        padding-left: 0;
+        margin: 0;
+    }
 </style>
 
 <div class="page-content">
@@ -80,6 +83,7 @@
         <table>
             <thead>
                 <tr>
+                    <th>#</th>
                     <th>Nom</th>
                     <th>Capacité</th>
                     <th>Statut</th>
@@ -95,6 +99,7 @@
                         $payees = $table->commandes->where('payment_status', 'payé');
                     @endphp
                     <tr>
+                        <td>{{ $table->id }}</td>
                         <td>{{ $table->nom_table }}</td>
                         <td>{{ $table->capacite }}</td>
                         <td>
@@ -111,7 +116,9 @@
                             @if($nonPayees->count())
                                 <ul>
                                     @foreach($nonPayees as $cmd)
-                                        <li>{{ $cmd->food->title ?? 'Produit inconnu' }} x{{ $cmd->quantite }}</li>
+                                        <li>
+                                            {{ $cmd->food->title ?? 'Produit inconnu' }} x{{ $cmd->quantite }}
+                                        </li>
                                     @endforeach
                                 </ul>
                             @else
@@ -123,7 +130,9 @@
                             @if($payees->count())
                                 <ul>
                                     @foreach($payees as $cmd)
-                                        <li>{{ $cmd->food->title ?? 'Produit inconnu' }} x{{ $cmd->quantite }}</li>
+                                        <li>
+                                            {{ $cmd->food->title ?? 'Produit inconnu' }} x{{ $cmd->quantite }}
+                                        </li>
                                     @endforeach
                                 </ul>
                             @else
@@ -132,26 +141,37 @@
                         </td>
 
                         <td>
-                            {{-- Bouton pour payer toutes les commandes non payées --}}
+                            {{-- Actions --}}
+                            @foreach($nonPayees as $cmd)
+                                {{-- <form action="{{ url('commande.supprimer', $cmd->id) }}" method="POST" style="display:inline;">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-danger btn-sm mb-1">Supprimer</button>
+                                </form> --}}
+
+                                {{-- <a href="{{ url('commande.modifier', $cmd->id) }}" 
+                                   class="btn btn-sm btn-warning mb-1">
+                                    Modifier
+                                </a> --}}
+                            @endforeach
+
                             @if($nonPayees->count())
                                 <form action="{{ route('serveur.commandes.payer_groupes', $table->id) }}" method="POST" style="display:inline;">
                                     @csrf
                                     @method('PUT')
                                     <button type="submit" class="btn btn-success btn-sm mb-1">Payer commandes</button>
                                 </form>
-
                                 <a href="{{ route('facture.commandes', $table->id) }}" target="_blank" class="btn btn-primary btn-sm mb-1">Facture</a>
                             @endif
 
-                            {{-- Bouton pour voir le reçu si commandes payées --}}
                             @if($payees->count())
-                                <a href="{{ route('recu.commandes', $table->id) }}" target="_blank" class="btn btn-secondary btn-sm">Reçu</a>
+                                <a href="{{ route('recu.commandes', $table->id) }}" target="_blank" class="btn btn-secondary btn-sm mb-1">Reçu</a>
                             @endif
                         </td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="6" class="text-center">Aucune table assignée.</td>
+                        <td colspan="7" class="text-center">Aucune table assignée.</td>
                     </tr>
                 @endforelse
             </tbody>

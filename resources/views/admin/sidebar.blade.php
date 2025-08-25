@@ -97,17 +97,12 @@
                 </li>
               </ul>
             </li>
-
-            
-
+         
             <li>
                 <a href="{{ url('kitchen') }}">
                     <i class="fa fa-fire"></i> Cuisine
                 </a>
             </li>
-
-                
-
 
                 <li>
                   <a href="{{ url('orders') }}"> <i 
@@ -120,20 +115,18 @@
                     class="fa fa-list-alt"></i>Reservations
                   </a>               
                 </li>
-
-                
-               
-              
-                
+          
                 <li>
                     <a href="{{ url('historique') }}">
                         <i class="fa fa-history"></i> Paiements
                     </a>
                 </li>
 
-             
-
-
+                 <li>
+                      <a href="{{ route('profile.show') }}" class="sidebar-link">
+                          <i class="fa fa-user-circle me-2"></i> Mon Profil
+                      </a>
+                  </li>
     
       </nav>
       <!-- Sidebar Navigation end-->

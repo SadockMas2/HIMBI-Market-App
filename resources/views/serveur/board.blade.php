@@ -31,7 +31,7 @@
         background: linear-gradient(135deg, #1e293b, #0f172a);
         border: none;
         color: #f8f9fa;
-        border-radius: 14px;
+        border-radius: 20px;
         padding: 25px 20px;
         box-shadow: 0 4px 15px rgba(0,0,0,0.3);
         transition: transform 0.3s ease, box-shadow 0.3s ease;

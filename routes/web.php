@@ -153,6 +153,16 @@ Route::middleware('auth')->group(function () {
     Route::post('enregistrer_commande', [ServeurController::class, 'enregistrerCommande'])->name('serveur.commande.store');
     Route::post('/serveur/commande-multiple', [ServeurController::class, 'enregistrerCommandeMultiple'])->name('serveur.commande.storeMultiple');
     Route::get('mesTables', [ServeurController::class, 'mesTables'])->name('serveur.mesTables');
+    // Route::get('/commandes', [ServeurController::class, 'commandes'])
+    //     ->name('commandes');
+
+    // // Modifier une commande
+    // Route::get('/commande/{id}/modifier', [ServeurController::class, 'modifierCommande']);
+    // // Supprimer une commande
+    // Route::delete('/commande/{id}/supprimer', [ServeurController::class, 'supprimerCommande']);
+     
+
+
     Route::post('serveur/reserver_table', [ServeurController::class, 'reserverTable'])->name('serveur.reserver_table');
     Route::get('stock-alerts', [ServeurController::class, 'stockAlerts']);
     Route::get('profile', [ServeurController::class, 'profile']);

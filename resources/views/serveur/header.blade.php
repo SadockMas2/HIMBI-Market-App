@@ -22,9 +22,9 @@
                 <li class="nav-item">
                     <form action="{{ route('logout') }}" method="POST">
                         @csrf
-                        <button type="submit" class="btn btn-outline-light btn-sm">
+                        {{-- <button type="submit" class="btn btn-outline-light btn-sm">
                             <i class="fa fa-sign-out-alt me-1"></i> Déconnexion
-                        </button>
+                        </button> --}}
                     </form>
                 </li>
             </ul>

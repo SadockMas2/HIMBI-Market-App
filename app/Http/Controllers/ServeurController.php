@@ -139,6 +139,49 @@ class ServeurController extends Controller
             return view('serveur.mesTables', compact('tables'));
         }
 
+    //     // Supprimer une commande
+    //    public function modifierCommande($id)
+    //     {
+    //         $commande = Order::findOrFail($id);
+    //         return view('serveur.modifier_commande', compact('commande'));
+    //     }
+
+    //     public function supprimerCommande($id)
+    //     {
+    //         $commande = Order::findOrFail($id);
+    //         $commande->delete();
+
+    //         return redirect()->route('serveur.commandes')
+    //                         ->with('success', 'Commande supprimée avec succès');
+    //     }
+
+    //     public function commande(){
+    //         Order::Findorfail();
+    //     }
+
+        // Mettre à jour la commande
+        public function updateCommande(Request $request, $id)
+        {
+            $commande = Order::findOrFail($id);
+
+            if ($commande->payment_status === 'payé') {
+                return back()->with('error', 'Impossible de modifier une commande déjà payée.');
+            }
+
+            $request->validate([
+                'food_id' => 'required|exists:food,id',
+                'quantity' => 'required|integer|min:1',
+            ]);
+
+            $commande->update([
+                'food_id' => $request->food_id,
+                'quantity' => $request->quantity,
+            ]);
+
+            return redirect()->route('serveur.mesTables')->with('success', 'Commande modifiée avec succès.');
+        }
+
+
 
         public function nouvelleCommande()
         {
@@ -429,36 +472,66 @@ class ServeurController extends Controller
                 return redirect()->back()->with('success', 'Commande prise en charge par le serveur.');
             }
 
-            public function commandesEnLigneDisponibles()
-            {
-                // Récupérer les commandes non encore prises en charge (en cours)
-                $commandes = Order::where('delivery_status', 'In Progress')
-                    ->get()
-                    ->groupBy('email');
+                public function commandesEnLigneDisponibles()
+                {
+                    $serveurId = Auth::id();
 
-                // Inclure toutes les tables disponibles, y compris "Commande externe"
-                $tablesDisponibles = Table::where('statut', 'Disponible')->get();
+                    // Tables assignées + "Commande externe"
+                    $tablesAssignes = Table::where('serveur_id', $serveurId)
+                        ->orWhere('nom_table', 'Commande externe')
+                        ->pluck('id')
+                        ->toArray();
 
-                return view('serveur.commandes_en_ligne', compact('commandes', 'tablesDisponibles'));
-            }
+                    // Toutes les commandes en ligne en cours
+                    $commandesEnLigne = Order::where('delivery_status', 'In Progress')->get();
 
-           
+                    $commandesFiltrees = collect();
+
+                    foreach ($commandesEnLigne as $commande) {
+                        $email = $commande->email ?? 'inconnu';
+
+                        // Vérifier réservation
+                        $reservation = Book::where('name', $commande->name)
+                            ->whereDate('date', now()->toDateString())
+                            ->where('payment_status', 'non_payé')
+                            ->latest()
+                            ->first();
+
+                        if ($reservation) {
+                            if (in_array($reservation->table_id, $tablesAssignes)) {
+                                $commandesFiltrees->push([
+                                    'email' => $email,
+                                    'commande' => $commande,
+                                    'reservation' => $reservation
+                                ]);
+                            }
+                        } else {
+                            // Pas de réservation
+                            $commandesFiltrees->push([
+                                'email' => $email,
+                                'commande' => $commande,
+                                'reservation' => null
+                            ]);
+                        }
+                    }
+
+                    // Regrouper par email pour le Blade
+                    $commandesFiltrees = $commandesFiltrees->groupBy('email');
+
+                    // Tables disponibles pour <select>
+                    $tablesDisponibles = Table::where('serveur_id', $serveurId)
+                        ->orWhere('nom_table', 'Commande externe')
+                        ->get();
+
+                    return view('serveur.commandes_en_ligne', compact('commandesFiltrees', 'tablesDisponibles'));
+                }
+
+
             public function prendreCommandesClient(Request $request)
             {
                 $orderIds = $request->input('order_ids', []);
                 $serveurId = $request->input('serveur_id');
                 $tableId = $request->input('table_id');
-
-                // Si aucune table n'a été choisie, utiliser la table "Commande externe"
-                if (!$tableId) {
-                    $tableExterne = Table::where('nom_table', 'Commande externe')->first();
-
-                    if (!$tableExterne) {
-                        return redirect()->back()->with('error', 'La table "Commande externe" est introuvable.');
-                    }
-
-                    $tableId = $tableExterne->id;
-                }
 
                 foreach ($orderIds as $orderId) {
                     $order = Order::find($orderId);
@@ -466,6 +539,26 @@ class ServeurController extends Controller
                     if (!$order || !$order->food_id) {
                         Log::error("Commande introuvable ou food_id manquant pour l'order ID: $orderId");
                         continue;
+                    }
+
+                    // Vérifier si le client a une réservation active
+                    $reservation = Book::where('name', $order->name)
+                        ->whereDate('date', now()->toDateString())
+                        ->where('payment_status', 'non_payé')
+                        ->latest()
+                        ->first();
+
+                    if ($reservation) {
+                        $tableId = $reservation->table_id;
+                    }
+
+                    // Fallback vers "Commande externe"
+                    if (!$tableId) {
+                        $tableExterne = Table::where('nom_table', 'Commande externe')->first();
+                        $tableId = $tableExterne ? $tableExterne->id : null;
+                        if (!$tableId) {
+                            return redirect()->back()->with('error', 'La table "Commande externe" est introuvable.');
+                        }
                     }
 
                     ServerOrder::create([
@@ -481,7 +574,7 @@ class ServeurController extends Controller
                     $order->update(['delivery_status' => 'Delivered']);
                 }
 
-                // Marquer la table comme occupée sauf si c'est la table "Commande externe"
+                // Marquer la table comme occupée sauf "Commande externe"
                 $table = Table::find($tableId);
                 if ($table && $table->nom_table !== 'Commande externe') {
                     $table->update([
@@ -491,8 +584,7 @@ class ServeurController extends Controller
                 }
 
                 return redirect()->back()->with('success', 'Commandes prises en charge avec succès.');
-        }
-
+            }
 
         
 

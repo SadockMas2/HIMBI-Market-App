@@ -4,13 +4,17 @@
     @include('admin.css')
     <style>
         .form-container {
-            max-width: 700px;
+            max-width: 500px;
             margin: 40px auto;
-            padding: 30px;
+            padding: 20px;
             background-color: #2c2f33;
             border-radius: 12px;
             box-shadow: 0 0 15px rgba(0,0,0,0.4);
         }
+
+        /* .mb-3{
+          box-shadow: 0 2px 6px black;
+        } */
 
         .form-label {
             color: white;
