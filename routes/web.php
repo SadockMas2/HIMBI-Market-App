@@ -34,11 +34,16 @@ Route::middleware('auth')->group(function () {
     Route::post('/update_cart_multiple', [HomeController::class, 'update_cart_multiple'])->middleware('auth');
     Route::get('/remove_cart/{id}', [HomeController::class, 'remove_cart']);
     Route::post('/confirm_order', [HomeController::class, 'confirm_order']);
+    Route::post('/checkout', [HomeController::class, 'checkout'])->name('checkout');
+
+
     Route::post('/add_cart_multiple', [HomeController::class, 'add_cart_multiple'])->name('add_cart_multiple');
 
     // Réservation
     Route::post('book_table', [HomeController::class, 'book_table']);
     Route::get('/book', [HomeController::class, 'showBookingForm'])->name('book.table');
+
+
 });
 
 
@@ -187,6 +192,10 @@ Route::middleware('auth')->group(function () {
     Route::post('/serveur/prendre-commande-en-ligne', [ServeurController::class, 'prendreCommandeEnLigne'])->name('serveur.prendre_commande_en_ligne');
     Route::post('/serveur/prendre-commandes-client', [ServeurController::class, 'prendreCommandesClient'])->name('serveur.prendre_commandes_client');
     
+
+
+     Route::get('serveur/orders/stream', [ServeurController::class, 'streamNewOrders'])
+        ->name('serveur.orders.stream');
 
 });
 

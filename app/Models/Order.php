@@ -14,7 +14,7 @@ class Order extends Model
     protected $fillable = [
         'name', 'email', 'phone', 'adress', 'title',
         'price', 'quantity', 'image', 'delivery_status',
-        'food_id', 'stock_insuffisant',
+        'food_id', 'stock_insuffisant','table_id',
     ];
     
     public function food()
@@ -33,6 +33,14 @@ class Order extends Model
     {
         return trim($value);
     }
+
+
+  public function table()
+    {
+        return $this->belongsTo(Table::class, 'table_id'); // table_id est la clé étrangère
+    }
+
+
 
 
 }

@@ -2,163 +2,168 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap');
 
+        /* Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         html, body {
             height: 100%;
-            margin: 0;
             font-family: 'Poppins', sans-serif;
             background: url('/images_sections/connexion.jpg') no-repeat center center fixed;
             background-size: cover;
-            overflow: hidden; /* plus de scroll */
             color: #fff;
         }
 
+        /* Overlay pour effet foncé */
         .overlay {
             position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0, 0, 0, 0.65);
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
             z-index: 0;
         }
 
+        /* Carte principale */
         .auth-card {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
+            position: relative;
             z-index: 10;
-            width: 100%;
-            max-width: 360px;
-            background: rgba(30, 30, 30, 0.85);
-            border-radius: 20px;
-            padding: 30px 25px 35px 25px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.7);
-            overflow-y: auto;
-            max-height: 90vh;
+            width: 95%;
+            max-width: 420px;
+            margin: auto;
+            margin-top: 5vh;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(8px);
+            border-radius: 16px;
+            padding: 30px 25px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.5);
         }
 
         h1 {
-            font-weight: 700;
             font-size: 2rem;
+            font-weight: 700;
             text-align: center;
-            margin-bottom: 15px;
-            color: #ffc107;
-            letter-spacing: 1.3px;
-            text-shadow: 0 0 8px rgba(255, 193, 7, 0.9);
+            margin-bottom: 20px;
+            color: #ffce54;
+            text-shadow: 0 2px 6px rgba(0,0,0,0.5);
         }
 
         label {
-            font-weight: 500;
-            font-size: 1rem;
             display: block;
             margin-bottom: 6px;
-            color: #ddd;
-            user-select: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: #f1f1f1;
         }
 
         input[type="text"],
         input[type="email"],
         input[type="password"] {
             width: 100%;
-            padding: 10px 16px;
-            border: none;
-            border-radius: 12px;
-            background: rgba(255, 255, 255, 0.12);
-            color: #eee;
-            font-size: 1.05rem;
-            margin-bottom: 22px;
-            box-shadow:
-                inset 2px 2px 6px rgba(255,255,255,0.15),
-                inset -2px -2px 6px rgba(0,0,0,0.7);
-            transition: background 0.25s ease, box-shadow 0.25s ease;
+            padding: 12px 14px;
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.2);
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            font-size: 1rem;
+            margin-bottom: 18px;
+            transition: all 0.3s ease;
         }
 
-        input[type="text"]:focus,
-        input[type="email"]:focus,
-        input[type="password"]:focus {
-            background: rgba(255, 255, 255, 0.25);
+        input:focus {
+            border-color: #ffce54;
             outline: none;
-            box-shadow: 0 0 12px #ffc107;
-            color: #fff;
+            background: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 0 6px #ffce54;
         }
 
         button {
-            background: linear-gradient(90deg, #ffc107, #ffca28);
-            border: none;
             width: 100%;
-            padding: 14px;
-            border-radius: 12px;
-            font-weight: 700;
-            font-size: 1.15rem;
-            cursor: pointer;
+            padding: 12px;
+            background: linear-gradient(90deg, #ffce54, #ffb300);
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
             color: #222;
-            box-shadow: 0 6px 20px rgba(255, 193, 7, 0.6);
-            transition: background 0.3s ease, box-shadow 0.3s ease;
-            user-select: none;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.3s ease;
         }
 
         button:hover {
-            background: linear-gradient(90deg, #ffb300, #ffa000);
-            box-shadow: 0 8px 30px rgba(255, 167, 0, 0.9);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(255, 193, 7, 0.7);
         }
 
         .already-registered {
-            margin-top: 20px;
-            font-size: 0.95rem;
             text-align: center;
+            margin-top: 15px;
+            font-size: 0.95rem;
             color: #ddd;
-            user-select: none;
         }
 
         .already-registered a {
-            color: #ffc107;
+            color: #ffce54;
             text-decoration: none;
             font-weight: 600;
-            transition: color 0.25s ease;
         }
 
         .already-registered a:hover {
-            color: #ffca28;
             text-decoration: underline;
         }
 
         .terms {
             display: flex;
             align-items: center;
-            font-size: 0.9rem;
+            gap: 8px;
+            font-size: 0.85rem;
+            margin-bottom: 15px;
             color: #ddd;
-            margin-bottom: 22px;
-            user-select: none;
         }
 
         .terms a {
-            color: #ffc107;
+            color: #ffce54;
             text-decoration: none;
             font-weight: 600;
-            margin-left: 4px;
         }
 
         .terms a:hover {
             text-decoration: underline;
-            color: #ffca28;
         }
 
         .validation-errors {
-            background-color: rgba(255, 50, 50, 0.85);
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 25px;
-            font-weight: 600;
+            background: rgba(220, 38, 38, 0.85);
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 18px;
+            font-size: 0.9rem;
             text-align: center;
-            box-shadow: 0 0 10px rgba(255, 50, 50, 0.8);
+            font-weight: 600;
         }
 
         /* Responsive */
+        @media (max-width: 768px) {
+            .auth-card {
+                padding: 20px;
+                margin-top: 10vh;
+            }
+            h1 {
+                font-size: 1.7rem;
+            }
+        }
+
         @media (max-width: 480px) {
             .auth-card {
                 width: 90%;
-                padding: 25px 15px 30px 15px;
+                padding: 18px;
             }
             h1 {
-                font-size: 1.8rem;
+                font-size: 1.5rem;
+            }
+            button {
+                font-size: 1rem;
+                padding: 10px;
             }
         }
     </style>
@@ -166,10 +171,6 @@
     <div class="overlay"></div>
 
     <div class="auth-card">
-        <div class="auth-card-logo">
-            <x-authentication-card-logo />
-        </div>
-
         <h1>Créer un compte</h1>
 
         <x-validation-errors class="validation-errors" />
@@ -222,7 +223,7 @@
             <button type="submit">S'inscrire</button>
 
             <div class="already-registered">
-                <a href="{{ route('login') }}">Déjà inscrit ? Connectez-vous</a>
+                <a href="{{ ('/') }}">Déjà inscrit ? Connectez-vous</a>
             </div>
         </form>
     </div>

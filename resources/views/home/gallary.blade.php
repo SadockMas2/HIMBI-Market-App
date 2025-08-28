@@ -1,189 +1,270 @@
+@extends('layouts.app')
+
+@section('content')
+
 <style>
-    /* Section Gallary - NOS MENUS */
-    #gallary {
-        position: relative;
-        background: url('/images_sections/menu.jpg') center center/cover no-repeat;
-        padding: 60px 20px;
-        color: #f8f9fa;
-        overflow: hidden;
-        border-radius: 16px;
-    }
+/* === Section principale === */
+#gallary {
+    position: relative;
+    background: url('/images_sections/11.jpg') center/cover no-repeat fixed;
+    padding: 40px 20px;
+    color: #fff;
+}
+#gallary::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.65);
+    z-index: 0;
+}
+#gallary > * {
+    position: relative;
+    z-index: 1;
+}
 
-    /* Overlay sombre */
-    #gallary::before {
-        content: "";
-        position: absolute;
-        top: 0; left: 0; right: 0; bottom: 0;
-        background: rgba(0,0,0,0.6);
-        z-index: 0;
-        border-radius: 16px;
-    }
+/* === Section header === */
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+    padding: 0px;
+}
+.section-title {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #c15e75;
+    text-shadow: 2px 2px 8px rgba(0,0,0,0.6);
+}
 
-    /* Contenu au-dessus de l'overlay */
-    #gallary > * {
-        position: relative;
-        z-index: 1;
-    }
+/* === Bouton commander === */
+.btn-panier-top {
+    background: #28a745;
+    color: #fff;
+    font-weight: bold;
+    padding: 10px 25px;
+    border-radius: 50px;
+    border: none;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.2s;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    white-space: nowrap;
+    margin-top: 10px;
+}
+.btn-panier-top:hover {
+    background: #218838;
+    transform: translateY(-2px);
+}
 
-    /* Titre de la section */
-    #gallary .section-title {
-        font-size: 2.8rem;
-        font-weight: 700;
-        margin-bottom: 40px;
-        text-transform: uppercase;
-        letter-spacing: 3px;
-        color: #ffc107;
-        text-align: center;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
+/* === Message erreur sélection === */
+.error-msg {
+    color: #ff6b6b;
+    font-weight: bold;
+    margin-top: 10px;
+    text-align: center;
+    display: none;
+}
 
-    /* Grille responsive */
-    .gallary {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-        gap: 20px;
-        max-width: 1200px;
-        margin: 0 auto;
-    }
+/* === Carrousels === */
+.scroll-row {
+    display: flex;
+    overflow-x: auto;
+    gap: 15px;
+    padding: 15px 0;
+    scroll-behavior: smooth;
+    scroll-snap-type: x mandatory;
+}
+.scroll-row::-webkit-scrollbar {
+    height: 6px;
+}
+.scroll-row::-webkit-scrollbar-thumb {
+    background: #ffc107;
+    border-radius: 6px;
+}
 
-    /* Chaque élément */
-    .gallary-item {
-        position: relative;
-        overflow: hidden;
-        border-radius: 12px;
-        cursor: pointer;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
+/* === Cartes nourriture/boisson === */
+.food-card {
+    flex: 0 0 auto;
+    width: 180px;
+    background: rgba(30, 30, 30, 0.95);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.6);
+    transition: transform 0.4s ease;
+    scroll-snap-align: center;
+}
+.food-card img {
+    width: 100%;
+    height: 130px;
+    object-fit: cover;
+    transition: height 0.4s ease;
+}
+.food-card.active {
+    transform: scale(1.05);
+    z-index: 2;
+}
+.card-body {
+    padding: 10px;
+    text-align: center;
+}
+.card-body h6 {
+    font-size: 1rem;
+    font-weight: bold;
+    margin-bottom: 4px;
+    color: #ffc107;
+}
+.card-body p {
+    font-size: 0.8rem;
+    opacity: 0.8;
+}
+.badge {
+    background: #ffc107;
+    color: #000;
+    padding: 3px 6px;
+    font-size: 0.8rem;
+    border-radius: 5px;
+    margin-bottom: 6px;
+    display: inline-block;
+}
+.card-body input[type="number"] {
+    width: 50px;
+    font-size: 0.85rem;
+    border-radius: 6px;
+    border: 1px solid #555;
+    background: #222;
+    color: #fff;
+    margin-top: 4px;
+    text-align: center;
+}
 
-    .gallary-item:hover {
-        transform: scale(1.05);
-        box-shadow: 0 8px 30px rgba(255, 193, 7, 0.7);
-        z-index: 10;
-    }
-
-    /* Image */
-    .gallary-img {
-        width: 100%;
-        height: 180px;
-        object-fit: cover;
-        display: block;
-        border-radius: 12px;
-        transition: transform 0.4s ease;
-    }
-
-    .gallary-item:hover .gallary-img {
-        transform: scale(1.1);
-    }
-
-    /* Overlay + icon au survol */
-    .gallary-overlay {
-        position: absolute;
-        top: 0; left: 0; right: 0; bottom: 0;
-        background: rgba(255, 193, 7, 0.5);
-        opacity: 0;
-        transition: opacity 0.3s ease;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        border-radius: 12px;
-    }
-
-    .gallary-item:hover .gallary-overlay {
-        opacity: 1;
-    }
-
-    .gallary-icon {
-        font-size: 2.5rem;
-        color: #212529;
-    }
-
-    /* Responsive adjustments */
-    @media (max-width: 576px) {
-        .gallary-img {
-            height: 140px;
-        }
-        #gallary .section-title {
-            font-size: 2rem;
-            margin-bottom: 30px;
-        }
-    }
+/* === Responsive mobile === */
+@media (max-width: 768px) {
+    .food-card { width: 140px; }
+    .food-card img { height: 100px; }
+    .section-title { font-size: 1.5rem; text-align: center; }
+    .section-header { flex-direction: column; gap: 8px; }
+    .btn-panier-top { width: 100%; font-size: 0.95rem; padding: 8px 20px; }
+}
 </style>
 
 <div id="gallary" class="wow fadeIn">
-    <h2 class="section-title">NOS MENUS</h2>
-    <div class="gallary">
-        <div class="gallary-item wow fadeIn">
-            <img src="food_img/1.jpg" alt="Menu 1" class="gallary-img" />
-            <a href="#" class="gallary-overlay">
-                <i class="gallary-icon ti-plus"></i>
-            </a>
+    <form id="form-commande" action="{{ url('add_cart_multiple') }}" method="POST">
+        @csrf
+
+        <!-- Message erreur -->
+        <div id="error-msg" class="error-msg">Veuillez sélectionner au moins un plat avant de commander !</div>
+
+        <!-- Section plats -->
+        <div class="section-header">
+            <h2 class="section-title">🍛 Nos Plats</h2>
+            <button type="submit" class="btn-panier-top">✅ Commander</button>
         </div>
-        <div class="gallary-item wow fadeIn">
-            <img src="food_img/3.webp" alt="Menu 2" class="gallary-img" />
-            <a href="#" class="gallary-overlay">
-                <i class="gallary-icon ti-plus"></i>
-            </a>
+        <div class="scroll-row" id="carousel-plats">
+            @foreach($data as $item)
+                @if(!Str::contains(Str::lower($item->detail), 'boisson'))
+                <div class="food-card">
+                    <img src="food_img/{{ $item->image }}" alt="{{ $item->title }}">
+                    <div class="card-body">
+                        <h6>{{ $item->title }}</h6>
+                        <p class="small">{{ $item->detail }}</p>
+                        <span class="badge">${{ $item->price }}</span><br>
+                        <label>
+                            <input type="checkbox" name="food_ids[]" value="{{ $item->id }}"> Sélectionner
+                        </label>
+                        <input type="number" name="qty[{{ $item->id }}]" value="1" min="1">
+                    </div>
+                </div>
+                @endif
+            @endforeach
         </div>
-        <div class="gallary-item wow fadeIn">
-            <img src="food_img/4.webp" alt="Menu 3" class="gallary-img" />
-            <a href="#" class="gallary-overlay">
-                <i class="gallary-icon ti-plus"></i>
-            </a>
+
+        <!-- Section boissons -->
+        <div class="section-header" style="margin-top:10px;">
+            <h2 class="section-title">🥤 Nos Boissons</h2>
         </div>
-        <div class="gallary-item wow fadeIn">
-            <img src="food_img/5.webp" alt="Menu 4" class="gallary-img" />
-            <a href="#" class="gallary-overlay">
-                <i class="gallary-icon ti-plus"></i>
-            </a>
+        <div class="scroll-row" id="carousel-boissons">
+            @foreach($data as $item)
+                @if(Str::contains(Str::lower($item->detail), 'boisson'))
+                <div class="food-card">
+                    <img src="food_img/{{ $item->image }}" alt="{{ $item->title }}">
+                    <div class="card-body">
+                        <h6>{{ $item->title }}</h6>
+                        <p class="small">{{ $item->detail }}</p>
+                        <span class="badge">${{ $item->price }}</span><br>
+                        <label>
+                            <input type="checkbox" name="food_ids[]" value="{{ $item->id }}"> Sélectionner
+                        </label>
+                        <input type="number" name="qty[{{ $item->id }}]" value="1" min="1">
+                    </div>
+                </div>
+                @endif
+            @endforeach
         </div>
-        <div class="gallary-item wow fadeIn">
-            <img src="food_img/6.webp" alt="Menu 5" class="gallary-img" />
-            <a href="#" class="gallary-overlay">
-                <i class="gallary-icon ti-plus"></i>
-            </a>
+
+        <!-- Bouton Commander en bas -->
+        <div class="text-center" style="margin-top:15px;">
+            <button type="submit" class="btn-panier-top">✅ Commander</button>
         </div>
-        <div class="gallary-item wow fadeIn">
-            <img src="food_img/19.jpg" alt="Menu 6" class="gallary-img" />
-            <a href="#" class="gallary-overlay">
-                <i class="gallary-icon ti-plus"></i>
-            </a>
-        </div>
-        <div class="gallary-item wow fadeIn">
-            <img src="food_img/10.webp" alt="Menu 7" class="gallary-img" />
-            <a href="#" class="gallary-overlay">
-                <i class="gallary-icon ti-plus"></i>
-            </a>
-        </div>
-        <div class="gallary-item wow fadeIn">
-            <img src="food_img/28.jpg" alt="Menu 8" class="gallary-img" />
-            <a href="#" class="gallary-overlay">
-                <i class="gallary-icon ti-plus"></i>
-            </a>
-        </div>
-        <div class="gallary-item wow fadeIn">
-            <img src="food_img/23.jpg" class="gallary-img" />
-            <a href="#" class="gallary-overlay">
-                <i class="gallary-icon ti-plus"></i>
-            </a>
-        </div>
-        <div class="gallary-item wow fadeIn">
-            <img src="food_img/32.jpeg" alt="Menu 10" class="gallary-img" />
-            <a href="#" class="gallary-overlay">
-                <i class="gallary-icon ti-plus"></i>
-            </a>
-        </div>
-        {{-- <div class="gallary-item wow fadeIn">
-            <img src="assets/imgs/gallary-11.jpg" alt="Menu 11" class="gallary-img" />
-            <a href="#" class="gallary-overlay">
-                <i class="gallary-icon ti-plus"></i>
-            </a>
-        </div>
-        <div class="gallary-item wow fadeIn">
-            <img src="assets/imgs/gallary-12.jpg" alt="Menu 12" class="gallary-img" />
-            <a href="#" class="gallary-overlay">
-                <i class="gallary-icon ti-plus"></i>
-            </a>
-        </div> --}}
-    </div>
+    </form>
 </div>
+
+<script>
+    // Validation sélection
+    const form = document.getElementById('form-commande');
+    const errorMsg = document.getElementById('error-msg');
+
+    form.addEventListener('submit', function(e){
+        const checkboxes = form.querySelectorAll('input[name="food_ids[]"]');
+        let checked = false;
+        checkboxes.forEach(cb => { if(cb.checked) checked = true; });
+
+        if(!checked){
+            e.preventDefault();
+            errorMsg.style.display = 'block';
+            errorMsg.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    });
+
+    // Carrousels
+    function initCarousel(carouselId) {
+        const container = document.getElementById(carouselId);
+        let autoScrollInterval;
+        let pauseTimeout;
+
+        function updateActiveCard() {
+            const cards = container.querySelectorAll('.food-card');
+            const containerCenter = container.scrollLeft + container.offsetWidth / 2;
+
+            cards.forEach(card => {
+                const cardCenter = card.offsetLeft + card.offsetWidth / 2;
+                card.classList.toggle('active', Math.abs(containerCenter - cardCenter) < card.offsetWidth / 2);
+            });
+        }
+
+        function startAutoScroll() {
+            autoScrollInterval = setInterval(() => {
+                const cardWidth = container.querySelector('.food-card')?.offsetWidth + 15 || 180;
+                let nextScroll = container.scrollLeft + cardWidth;
+                if (nextScroll >= container.scrollWidth - container.clientWidth) nextScroll = 0;
+                container.scrollTo({ left: nextScroll, behavior: 'smooth' });
+            }, 3000);
+        }
+
+        function stopAutoScroll() { clearInterval(autoScrollInterval); }
+
+        container.addEventListener('scroll', () => {
+            stopAutoScroll();
+            clearTimeout(pauseTimeout);
+            pauseTimeout = setTimeout(() => startAutoScroll(), 10000);
+            updateActiveCard();
+        });
+
+        updateActiveCard();
+        startAutoScroll();
+    }
+
+    initCarousel("carousel-plats");
+    initCarousel("carousel-boissons");
+</script>

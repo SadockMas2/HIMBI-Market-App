@@ -169,13 +169,13 @@
             <ul class="navbar-nav text-center">
                 <li class="nav-item"><a class="nav-link" href="#home"><i class="ti-home"></i> Accueil</a></li>
                 <li class="nav-item"><a class="nav-link" href="#gallary"><i class="ti-menu-alt"></i> Menu</a></li>
-                <li class="nav-item"><a class="nav-link" href="#book"><i class="ti-calendar"></i> Réserver</a></li>
-                <li class="nav-item"><a class="nav-link" href="#blog"><i class="ti-bookmark-alt"></i> Plats</a></li>
+                <li class="nav-item"><a class="nav-link" href="#book"><i class="ti-calendar"></i> Booker une table</a></li>
+                {{-- <li class="nav-item"><a class="nav-link" href="#blog"><i class="ti-bookmark-alt"></i> Plats</a></li> --}}
                 <li class="nav-item"><a class="nav-link" href="#about"><i class="ti-user"></i> À propos</a></li>
 
                 @if (Route::has('login'))
                     @auth
-                        <li class="nav-item"><a class="nav-link" href="{{ url('my_cart') }}"><i class="ti-shopping-cart"></i> Panier</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ url('my_cart') }}"><i class="ti-shopping-cart"></i> Mes commandes</a></li>
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle text-warning fw-bold" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 <i class="ti-user me-1"></i> {{ Auth::user()->name }}
@@ -205,7 +205,7 @@
     </div>
 </nav>
 
-@if (session('commande_success'))
+{{-- @if (session('commande_success'))
     <div class="alert alert-success alert-dismissible fade show" role="alert">
         {{ session('commande_success') }}
         @if(session('pdf_url'))
@@ -213,8 +213,17 @@
         @endif
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
-@endif
+@endif --}}
 
+<div id="home">
+    @if(session('success'))
+        <div class="alert alert-success text-center mt-3">
+            {{ session('success') }}
+        </div>
+    @endif
+
+    {{-- Le reste de ton contenu de home --}}
+</div>
 
 <!-- HEADER -->
 <header id="home" class="header">

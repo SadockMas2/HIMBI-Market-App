@@ -8,8 +8,11 @@
     </div>
 
     <!-- 🔍 Formulaire de filtre -->
-    <form method="GET" action="{{ url('historique') }}" class="row g-3 mb-4 bg-light p-3 rounded shadow-sm">
-        <div class="col-md-4">
+    <form method="GET" action="{{ url('historique') }}" 
+          class="row g-3 mb-4 bg-light p-3 rounded shadow-sm">
+
+        <!-- Filtrer par serveur -->
+        <div class="col-12 col-md-4">
             <label for="serveur_id" class="form-label fw-bold">Filtrer par Serveur</label>
             <select name="serveur_id" id="serveur_id" class="form-select">
                 <option value="">-- Tous les serveurs --</option>
@@ -21,20 +24,27 @@
             </select>
         </div>
 
-        <div class="col-md-4">
+        <!-- Filtrer par date -->
+        <div class="col-12 col-md-4">
             <label for="date" class="form-label fw-bold">Filtrer par Date</label>
             <input type="date" name="date" id="date" class="form-control" value="{{ request('date') }}">
         </div>
 
-        <div class="col-md-4 d-flex align-items-end gap-2">
-            <button type="submit" class="btn btn-primary w-100"><i class="fa fa-search me-1"></i> Rechercher</button>
-            <a href="{{ route('admin.historique') }}" class="btn btn-secondary w-100"><i class="fa fa-undo me-1"></i> Réinitialiser</a>
+        <!-- Boutons -->
+        <div class="col-12 col-md-4 d-flex flex-column flex-md-row align-items-stretch gap-2">
+            <button type="submit" class="btn btn-primary w-100">
+                <i class="fa fa-search me-1"></i> Rechercher
+            </button>
+            <a href="{{ route('admin.historique') }}" class="btn btn-secondary w-100">
+                <i class="fa fa-undo me-1"></i> Réinitialiser
+            </a>
         </div>
     </form>
 
     <!-- 📄 Bouton Export PDF -->
     <div class="mb-3 text-end">
-        <a href="{{ route('admin.historique.pdf', request()->only(['serveur_id', 'date'])) }}" class="btn btn-danger">
+        <a href="{{ route('admin.historique.pdf', request()->only(['serveur_id', 'date'])) }}" 
+           class="btn btn-danger">
             <i class="fa fa-file-pdf me-1"></i> Exporter en PDF
         </a>
     </div>
@@ -42,7 +52,7 @@
     <!-- 📋 Tableau des commandes -->
     <div class="table-responsive bg-white p-3 rounded shadow-sm">
         <table class="table table-bordered table-striped align-middle">
-            <thead class="table-dark">
+            <thead class="table-dark text-center">
                 <tr>
                     <th>ID</th>
                     <th>Serveur</th>
@@ -64,10 +74,10 @@
                         <td>{{ $commande->id }}</td>
                         <td>{{ $commande->serveur->name ?? 'Inconnu' }}</td>
                         <td>{{ $commande->food->title ?? 'N/A' }}</td>
-                        <td>{{ $commande->quantite }}</td>
+                        <td class="text-center">{{ $commande->quantite }}</td>
                         <td>{{ $commande->created_at->format('d/m/Y H:i') }}</td>
-                        <td>{{ ucfirst($commande->payment_status) }}</td>
-                        <td>{{ number_format($ligneTotal, 2, ',', ' ') }} $</td>
+                        <td class="text-success fw-bold">{{ ucfirst($commande->payment_status) }}</td>
+                        <td class="fw-bold">{{ number_format($ligneTotal, 2, ',', ' ') }} $</td>
                     </tr>
                 @empty
                     <tr>

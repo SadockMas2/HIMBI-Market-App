@@ -13,7 +13,10 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Queue\RedisQueue;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use App\Events\CommandeConfirmee;
+
 
 
 class HomeController extends Controller
@@ -187,95 +190,102 @@ class HomeController extends Controller
 
         
 
-
-    // Confirmation de la commande (envoi de tout le panier)
-
-                public function confirm_order(Request $request)
+            public function confirm_order(Request $request)
             {
-                $user_id = Auth::id();
+                $user_id   = Auth::id();
+                $food_ids  = $request->input('food_id', []);
+                $titles    = $request->input('title', []);
+                $quantities= $request->input('quantity', []);
+                $prices    = $request->input('price', []);
 
-                $food_ids = $request->input('food_id', []);
-                $titles = $request->input('title', []);
-                $quantities = $request->input('quantity', []);
-                $prices = $request->input('price', []);
+                // Déterminer la table
+                if ($request->mode === 'sur_place') {
+                    $table_id = $request->table_id ?: null;
 
-                // Sécurité : forcer les tableaux
-                if (!is_array($food_ids)) $food_ids = [$food_ids];
-                if (!is_array($titles)) $titles = [$titles];
-                if (!is_array($quantities)) $quantities = [$quantities];
-                if (!is_array($prices)) $prices = [$prices];
-
-                $valid_indexes = [];
-                foreach ($food_ids as $index => $food_id) {
-                    if (!empty($food_id)) {
-                        $valid_indexes[] = $index;
+                    if (!$table_id) {
+                        return redirect()->back()->with('error', 'Veuillez choisir une table.');
                     }
+
+                    // Vérifier la disponibilité
+                    $table = Table::where('id', $table_id)
+                                ->where('statut', 'Disponible')
+                                ->first();
+
+                    if (!$table) {
+                        return redirect()->back()->with('error', 'La table sélectionnée n’est pas disponible.');
+                    }
+
+                    // Marquer la table comme occupée
+                    $table->update(['statut' => 'Occupée']);
+                } else {
+                    // Mode à emporter
+                    $table = Table::where('nom_table', 'Commande externe')->first();
+                    if (!$table) {
+                        return redirect()->back()->with('error', 'La table "Commande externe" est introuvable.');
+                    }
+                    $table_id = $table->id;
                 }
 
-                if (empty($valid_indexes)) {
-                    return back()->with('error', 'Aucun plat sélectionné.');
-                }
-
-                $order_data = [];
-
-                foreach ($valid_indexes as $idx) {
-                    $food = Food::find($food_ids[$idx]);
+                // Création des commandes
+                foreach ($food_ids as $index => $food_id) {
+                    $food = Food::find($food_id);
                     if (!$food) continue;
 
-                    $order = new Order();
-                    $order->name = $request->name;
-                    $order->email = $request->email;
-                    $order->phone = $request->phone;
-                    $order->adress = $request->adress;
-                    $order->title = $titles[$idx];
-                    $order->quantity = (int) ($quantities[$idx] ?? 1);
-                    $order->price = $prices[$idx];
-                    $order->food_id = $food->id;
+                    $quantity = (int)($quantities[$index] ?? 1);
 
-                    // ✅ Corrige ici : statut propre sans retour à la ligne
-                    $order->delivery_status = 'In Progress';
+                    Order::create([
+                        'name'            => $request->name,
+                        'email'           => $request->email,
+                        'phone'           => $request->phone,
+                        'adress'          => $request->adress,
+                        'title'           => $titles[$index],
+                        'quantity'        => $quantity,
+                        'price'           => $prices[$index],
+                        'food_id'         => $food->id,
+                        'delivery_status' => 'In Progress',
+                        'table_id'        => $table_id, // 🔥 Sauvegarde de la table
+                    ]);
 
-                    // Gestion stock insuffisant
-                    $order->stock_insuffisant = $food->stock < $order->quantity;
-
-                    $order->save();
-
-                    // Mettre à jour le stock
-                    $food->stock -= $order->quantity;
-                    $food->save();
-
-                    $order_data[] = [
-                        'title' => $titles[$idx],
-                        'quantity' => $quantities[$idx],
-                        'price' => $prices[$idx],
-                    ];
+                    // Décrément du stock
+                    $food->decrement('stock', $quantity);
                 }
 
                 // Vider le panier
                 Cart::where('userid', $user_id)->delete();
 
-                // Générer le PDF
-                $pdf = Pdf::loadView('pdfs.commande', [
-                    'name' => $request->name,
-                    'email' => $request->email,
-                    'phone' => $request->phone,
-                    'adress' => $request->adress,
-                    'orders' => $order_data
-                ]);
+                return redirect('/home#home')->with('success', 'Commande confirmée avec succès !');
+            }
 
-                // Sauvegarder le fichier dans le dossier public
-                $filename = 'commande_' . Str::random(10) . '.pdf';
-                Storage::disk('public')->put($filename, $pdf->output());
 
-                return redirect('/home')->with([
-                    'commande_success' => 'Votre commande a été confirmée avec succès !',
-                    'pdf_url' => asset('storage/' . $filename)
-                ]);
+    // MyCartController
+            public function checkout(Request $request)
+            {
+                $user_id = Auth::id();
+
+                // Récupérer les articles du panier
+                $cart_items = collect($request->input('food_id', []))->map(function($food_id, $index) use ($request) {
+                    return (object)[
+                        'food_id' => $food_id,
+                        'title' => $request->title[$index] ?? '',
+                        'quantity' => $request->quantity[$index] ?? 1,
+                        'price' => $request->price[$index] ?? 0,
+                    ];
+                });
+
+                // Tables disponibles, **exclure "Commande externe"**
+                $tables = DB::table('tables')
+                            ->where('statut', 'disponible')
+                            ->where('nom_table', '<>', 'Commande externe')
+                            ->get();
+
+                return view('home.checkout', compact('cart_items', 'tables'));
             }
 
 
 
-    // Mise à jour de la quantité dans le panier
+       
+        
+
             public function update_cart(Request $request, $cart_id)
         {
             if (!Auth::check()) {

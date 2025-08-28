@@ -18,7 +18,7 @@
         @include('home.header')
         @include('home.gallary')
         @include('home.book')
-        @include('home.blog')
+        {{-- @include('home.blog') --}}
         @include('home.about')
     @endauth
 

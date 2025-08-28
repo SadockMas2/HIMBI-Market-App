@@ -526,65 +526,108 @@ class ServeurController extends Controller
                     return view('serveur.commandes_en_ligne', compact('commandesFiltrees', 'tablesDisponibles'));
                 }
 
+                 public function streamNewOrders(Request $request)
+                        {
+                            $since = (int) $request->query('since', 0);
 
-            public function prendreCommandesClient(Request $request)
-            {
-                $orderIds = $request->input('order_ids', []);
-                $serveurId = $request->input('serveur_id');
-                $tableId = $request->input('table_id');
+                            // Si first call (since == 0) : on retourne juste le max id sans renvoyer d'items
+                            if ($since <= 0) {
+                                $maxId = (int) Order::max('id') ?: 0;
+                                return response()->json(['max_id' => $maxId, 'orders' => []]);
+                            }
 
-                foreach ($orderIds as $orderId) {
-                    $order = Order::find($orderId);
+                            // Récupère commandes créées après l'id $since
+                            $orders = Order::where('id', '>', $since)
+                                ->orderBy('id', 'asc')
+                                ->get();
 
-                    if (!$order || !$order->food_id) {
-                        Log::error("Commande introuvable ou food_id manquant pour l'order ID: $orderId");
-                        continue;
-                    }
+                            $payload = $orders->map(function ($o) {
+                                return [
+                                    'id' => $o->id,
+                                    'title' => $o->title,
+                                    'quantity' => $o->quantity,
+                                    'client_name' => $o->name,
+                                    'email' => $o->email,
+                                    'phone' => $o->phone,
+                                    'adress' => $o->adress,
+                                    'created_at' => optional($o->created_at)->toDateTimeString(),
+                                ];
+                            })->values();
 
-                    // Vérifier si le client a une réservation active
-                    $reservation = Book::where('name', $order->name)
-                        ->whereDate('date', now()->toDateString())
-                        ->where('payment_status', 'non_payé')
-                        ->latest()
-                        ->first();
+                            $maxId = (int) Order::max('id') ?: $since;
 
-                    if ($reservation) {
-                        $tableId = $reservation->table_id;
-                    }
-
-                    // Fallback vers "Commande externe"
-                    if (!$tableId) {
-                        $tableExterne = Table::where('nom_table', 'Commande externe')->first();
-                        $tableId = $tableExterne ? $tableExterne->id : null;
-                        if (!$tableId) {
-                            return redirect()->back()->with('error', 'La table "Commande externe" est introuvable.');
+                            return response()->json([
+                                'max_id' => $maxId,
+                                'orders' => $payload,
+                            ]);
                         }
+
+
+
+           public function prendreCommandesClient(Request $request)
+                {
+                    $orderIds = $request->input('order_ids', []);
+                    $serveurId = $request->input('serveur_id');
+                    $tableId = $request->input('table_id', null); // Table choisie côté serveur (optionnelle)
+
+                    foreach ($orderIds as $orderId) {
+                        $order = Order::find($orderId);
+
+                        if (!$order || !$order->food_id) {
+                            Log::error("Commande introuvable ou food_id manquant pour l'order ID: $orderId");
+                            continue;
+                        }
+
+                        // Vérifier si le client a une réservation active
+                        $reservation = Book::where('name', $order->name)
+                            ->whereDate('date', now()->toDateString())
+                            ->where('payment_status', 'non_payé')
+                            ->latest()
+                            ->first();
+
+                        // Priorité : table du client
+                        if ($reservation && $reservation->table_id) {
+                            $tableId = $reservation->table_id;
+                        } elseif ($order->table_id) {
+                            // Sinon table choisie par le client lors du checkout
+                            $tableId = $order->table_id;
+                        }
+
+                        // Fallback vers "Commande externe"
+                        if (!$tableId) {
+                            $tableExterne = Table::where('nom_table', 'Commande externe')->first();
+                            if (!$tableExterne) {
+                                return redirect()->back()->with('error', 'La table "Commande externe" est introuvable.');
+                            }
+                            $tableId = $tableExterne->id;
+                        }
+
+                        // Créer la commande serveur
+                        ServerOrder::create([
+                            'serveur_id' => $serveurId,
+                            'table_id' => $tableId,
+                            'food_id' => $order->food_id,
+                            'quantite' => $order->quantity,
+                            'statut' => 'en_attente',
+                            'commande_en_ligne_id' => $order->id,
+                            'payment_status' => 'non_payé',
+                        ]);
+
+                        // Marquer la commande comme prise en charge
+                        $order->update(['delivery_status' => 'Delivered']);
                     }
 
-                    ServerOrder::create([
-                        'serveur_id' => $serveurId,
-                        'table_id' => $tableId,
-                        'food_id' => $order->food_id,
-                        'quantite' => $order->quantity,
-                        'statut' => 'en_attente',
-                        'commande_en_ligne_id' => $order->id,
-                        'payment_status' => 'non_payé',
-                    ]);
+                    // Marquer la table comme occupée si ce n’est pas "Commande externe"
+                    $table = Table::find($tableId);
+                    if ($table && $table->nom_table !== 'Commande externe') {
+                        $table->update([
+                            'serveur_id' => $serveurId,
+                            'statut' => 'Occupée',
+                        ]);
+                    }
 
-                    $order->update(['delivery_status' => 'Delivered']);
+                    return redirect()->back()->with('success', 'Commandes prises en charge avec succès.');
                 }
-
-                // Marquer la table comme occupée sauf "Commande externe"
-                $table = Table::find($tableId);
-                if ($table && $table->nom_table !== 'Commande externe') {
-                    $table->update([
-                        'serveur_id' => $serveurId,
-                        'statut' => 'occupée',
-                    ]);
-                }
-
-                return redirect()->back()->with('success', 'Commandes prises en charge avec succès.');
-            }
 
         
 

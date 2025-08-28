@@ -111,7 +111,7 @@
     <input type="text" name="phone" value="{{ old('phone', auth()->user()->phone) }}">
 
     <label for="address">Adresse</label>
-    <textarea name="address">{{ old('address', auth()->user()->address) }}</textarea>
+    <textarea name="address">{{ old('adress', auth()->user()->adress) }}</textarea>
 
     <hr style="margin: 20px 0; border-color: #555;">
 

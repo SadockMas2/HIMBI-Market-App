@@ -18,6 +18,8 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
+        'phone',
+        'adress',
         'password',
         'usertype', // si tu as ce champ pour distinguer admin, serveur, client, etc.
     ];
